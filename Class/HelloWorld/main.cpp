@@ -1,7 +1,7 @@
 /* 
  * File:   main.cpp
  * Author: Alexander Rothman
- * Purpose: Check out IDE
+ * Purpose: Check out IDE, Hello, World!
  * Created on January 4, 2016, 10:18 AM
  */
 

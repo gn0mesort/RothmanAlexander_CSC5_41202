@@ -19,12 +19,13 @@ using namespace std;
 //Execution Begins Here
 int main(int argc, char** argv) {
     //Declare and initialize variables
-    char letter = 'X';
+    char letter = 'X'; //The character to use
     //Input data
 
     //Calculate or map inputs to outputs
     
     //Output the results
+    //Print out the letter C with the given character
     cout  << "  " << letter << letter << letter << endl;
     cout << ' ' << letter << "   " << letter << endl;
     cout << letter << endl;

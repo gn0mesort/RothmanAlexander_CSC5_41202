@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
     cout << letter << endl;
     cout << ' ' << letter << "   " << letter << endl;
     cout  << "  " << letter << letter << letter << endl;
+    
     //Exit stage right
     return 0;
 }

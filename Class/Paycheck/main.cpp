@@ -1,9 +1,10 @@
 /* 
  * File:   main.cpp
  * Author: Alexander Rothman
- * Purpose: 
+ * Purpose: Calculate a paycheck based on hours worked and a pay rate input by the user
  * Created on January 5, 2016, 9:29 AM
  */
+
 //System Libraries
 #include <iostream>
 
@@ -21,6 +22,7 @@ int main(int argc, char** argv) {
     unsigned char hrsWrkd = 40; //Hours worked (hrs)
     float payRate = 1e1f, //Pay Rate in dollars/hour 
           payChck; //Total pay check in dollars
+    
     //Input data
     
     //Calculate or map inputs to outputs

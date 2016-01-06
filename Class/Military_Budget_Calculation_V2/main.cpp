@@ -30,9 +30,12 @@ int main(int argc, char** argv) {
     percMil = milBdgt / fedBdgt * cnvPerc;
     
     //Output Results
-    cout << "Total Military Budget:                                $" << milBdgt << endl;
-    cout << "Total Federal Budget:                                 $" << fedBdgt << endl;
-    cout << "Military Budget as a percentage of the Federal Budget: " << percMil << "%" << endl;
+    cout << "Total Military Budget:                                $"; 
+    cout << milBdgt << endl;
+    cout << "Total Federal Budget:                                 $"; 
+    cout << fedBdgt << endl;
+    cout << "Military Budget as a percentage of the Federal Budget: "; 
+    cout << percMil << "%" << endl;
     
     //Exit
     return 0;

@@ -23,12 +23,12 @@ const char cnvDolr = 100;
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    unsigned char numQrtr, //The number of quarters
+    unsigned short numQrtr, //The number of quarters
                   numNckl, //The number of nickels
-                  numDime; //The number of dimes
-    unsigned short total; //The total value of all the coins in cents
+                  numDime, //The number of dimes 
+                  total; //The total value of all the coins in cents
     //Input Data
-    cout << "Enter the quantity of each type of coin. Quantities must be 0-9" << endl;
+    cout << "Enter the quantity of each type of coin." << endl;
     cout << "Press return after entering a number." << endl;
     //Read in the number of quarters
     cout << "Number of Quarters: ";
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     cin >> numNckl;
     
     //Calculate Output
-    total = (cnvQrtr * (numQrtr - 48)) + (cnvDime * (numDime - 48)) + (cnvNckl * (numNckl - 48)); //Calculate the total by multiplying the number of each type of coin by its value in cents
+    total = (cnvQrtr * numQrtr) + (cnvDime * numDime) + (cnvNckl * numNckl); //Calculate the total by multiplying the number of each type of coin by its value in cents
     
     //Output Data
     cout << "Total:              " << total << " cents" << endl; //Output the total in cents

@@ -13,8 +13,8 @@ using namespace std;
 //User Libraries
 
 //Global Constants
-const char wtBill = 1; //Weight of a single bill in grams
-const float cnvLbs = 1/435.5f; //Conversion from grams to pounds
+const char WT_BILL = 1; //Weight of a single bill in grams
+const float CNV_LBS = 1/435.5f; //Conversion from grams to pounds
 
 //Functional Prototypes
 
@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
     cin >> denom;
     
     //Calculate Output
-    nPerps = cnvLbs * amtStl * wtBill / denom / wtPers + 1; // Calculate the number of perpetrators
-    
+    nPerps = CNV_LBS * amtStl * WT_BILL / denom / wtPers; // Calculate the number of perpetrators
+    nPerps += 1; //Round up to the nearest whole person.
     //Output Data
     cout << "Amount Desired =                           $" << amtStl << endl;
     cout << "Desired Denomination =                     $" << denom << endl;

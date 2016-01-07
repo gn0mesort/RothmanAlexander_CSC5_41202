@@ -2,7 +2,7 @@
  * File:   main.cpp
  * Author: Alexander Rothman
  * Purpose: Calculate the military budget of the USA as a percentage of the Federal budget
- * Created on January 6, 2016, 8:11 AM
+ * Created on January 7, 2016, 10:18 AM
  */
 
 //System Libraries

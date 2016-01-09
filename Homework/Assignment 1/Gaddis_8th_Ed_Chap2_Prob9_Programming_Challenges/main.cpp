@@ -37,13 +37,13 @@ int main(int argc, char** argv) {
     //Output Results
     cout << "SIZE OF DATA TYPES:" << endl;
     cout << "CHAR LENGTH:" << setw(10) << static_cast<int>(chrLnth) 
-         << " bytes " << CNV_BIT * chrLnth << " bits" << endl;
+         << " bytes or " << CNV_BIT * chrLnth << " bits" << endl;
     cout << "INT LENGTH:" << setw(11) << static_cast<int>(intLnth)
-         << " bytes " << CNV_BIT * intLnth << " bits" << endl;
+         << " bytes or " << CNV_BIT * intLnth << " bits" << endl;
     cout << "FLOAT LENGTH:" << setw(9) << static_cast<int>(fltLnth)
-         << " bytes " << CNV_BIT * fltLnth << " bits" << endl;
+         << " bytes or " << CNV_BIT * fltLnth << " bits" << endl;
     cout << "DOUBLE LENGTH:" << setw(8) << static_cast<int>(dblLnth)
-         << " bytes " << CNV_BIT * dblLnth << " bits" << endl;
+         << " bytes or " << CNV_BIT * dblLnth << " bits" << endl;
     
     //Exit
     return 0;

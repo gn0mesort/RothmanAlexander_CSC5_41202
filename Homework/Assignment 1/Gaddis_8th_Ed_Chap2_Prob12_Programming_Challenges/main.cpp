@@ -14,7 +14,7 @@ using namespace std;
 //User Libraries
 
 //Global Constants
-unsigned short CNV_ACR = 43560;
+unsigned const short CNV_ACR = 43560;
 
 //Functional Prototypes
 

@@ -14,7 +14,7 @@ using namespace std;
 //User Libraries
 
 //Global Constants
-unsigned char CNV_BITS = 8; //Conversion rate for bytes to bits
+unsigned const char CNV_BITS = 8; //Conversion rate for bytes to bits
 
 //Functional Prototypes
 

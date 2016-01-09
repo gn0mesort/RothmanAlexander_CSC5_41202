@@ -20,8 +20,8 @@ using namespace std;
 int main(int argc, char** argv) {
     //Declaration and Initialization
     float percent = 0.58f; //The percentage of overall sales by the East Coast division
-    int ovrSls = 8600000, //The overall sales of the company 
-        total; //The total sales of the East Coast division
+    unsigned int ovrSls = 8600000, //The overall sales of the company 
+                 total; //The total sales of the East Coast division
     
     //Input Data
     

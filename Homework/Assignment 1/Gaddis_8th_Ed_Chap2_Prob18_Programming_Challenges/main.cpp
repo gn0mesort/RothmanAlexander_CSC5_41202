@@ -13,7 +13,7 @@ using namespace std;
 //User Libraries
 
 //Global Constants
-const char cnvPerc = 100; //Conversion to percentage
+unsigned const char CNV_PER = 100; //Conversion to percentage
 
 //Functional Prototypes
 
@@ -29,8 +29,8 @@ int main(int argc, char** argv) {
     //Input Data
     
     //Calculate Output
-    aprxCst = cstSurv * percPur / cnvPerc; //Calculate the approximate number of people who bought a drink
-    aprxCit = aprxCst * prefCit / cnvPerc; //Calculate the approximate number of people who bought a drink and preferred citrus
+    aprxCst = cstSurv * percPur / CNV_PER; //Calculate the approximate number of people who bought a drink
+    aprxCit = aprxCst * prefCit / CNV_PER; //Calculate the approximate number of people who bought a drink and preferred citrus
     
     //Output Results
     cout << "Customers Surveyed:                                               ";

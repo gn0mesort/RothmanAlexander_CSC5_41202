@@ -13,10 +13,10 @@ using namespace std;
 //User Libraries
 
 //Global Constants
-const char CNV_NCL = 5; //Conversion from nickels to cents
-const char CNV_DIM = 10; //Conversion from dimes to cents
-const char CNV_QTR = 25; //Conversion from quarter to cents
-const char CNV_DOL = 100; //Conversion from cents to dollars
+unsigned const char CNV_NCL = 5; //Conversion from nickels to cents
+unsigned const char CNV_DIM = 10; //Conversion from dimes to cents
+unsigned const char CNV_QTR = 25; //Conversion from quarter to cents
+unsigned const char CNV_DOL = 100; //Conversion from cents to dollars
 
 //Functional Prototypes
 

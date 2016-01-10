@@ -13,6 +13,7 @@ using namespace std;
 //User Libraries
 
 //Global Constants
+unsigned const char CNV_PER = 100; //Conversion to percentage
 
 //Functional Prototypes
 
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
     
     //Output Results
     cout << "Overall Sales:                           $" << ovrSls << endl;
-    cout << "Predicted Percentage:                     " << (percent * 100) //Output the percentage as a percentage rather than a floating point number
+    cout << "Predicted Percentage:                     " << (percent * CNV_PER) //Output the percentage as a percentage rather than a floating point number
                                                          << "%" << endl; 
     cout << "Total Sales for the East Coast division: $" << total << endl;
     

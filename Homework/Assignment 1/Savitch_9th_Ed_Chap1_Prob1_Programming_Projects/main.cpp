@@ -1,6 +1,6 @@
 /* 
  * File:   main.cpp
- * Author: Alexander
+ * Author: Alexander Rothman
  * Purpose: Calculate the sum and product of two integers
  * Created on January 5, 2016, 4:31 PM
  */

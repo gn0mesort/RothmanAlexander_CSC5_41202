@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
                    aprxCst, //The approximate number of people who bought a drink
                    aprxCit; //The approximate number of people who bought a drink and preferred citrus
     char percPur = 15, //The percentage of the surveyed customers that purchased a drink
-          prefCit = 58; //The percentage of the customers who bought a drink and preferred citrus
+         prefCit = 58; //The percentage of the customers who bought a drink and preferred citrus
     
     //Input Data
     

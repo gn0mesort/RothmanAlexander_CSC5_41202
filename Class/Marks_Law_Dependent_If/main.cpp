@@ -20,7 +20,7 @@ using namespace std;
 int main(int argc, char** argv) {
     //Declare and Initialize Variables
     unsigned short score; 
-             char grade;
+    char grade;
     
     //Input Data
     //Read in score

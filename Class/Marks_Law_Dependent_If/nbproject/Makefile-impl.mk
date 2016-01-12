@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Truth_Table
+PROJECTNAME=Marks_Law_Dependent_If
 
 # Active Configuration
 DEFAULTCONF=Debug

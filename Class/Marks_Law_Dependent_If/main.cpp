@@ -19,8 +19,8 @@ using namespace std;
 //Begin Execution
 int main(int argc, char** argv) {
     //Declare and Initialize Variables
-    unsigned short score; 
-    char grade;
+    unsigned short score; //The score to grade
+    char grade; //The grade to output
     
     //Input Data
     //Read in score

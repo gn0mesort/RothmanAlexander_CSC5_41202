@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Marks_Law_Dependent_If
+PROJECTNAME=Loan_Payments
 
 # Active Configuration
 DEFAULTCONF=Debug

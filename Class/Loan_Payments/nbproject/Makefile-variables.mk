@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=Cygwin_4.x-Windows
 CND_ARTIFACT_DIR_Debug=dist/Debug/Cygwin_4.x-Windows
-CND_ARTIFACT_NAME_Debug=marks_law_dependent_if
-CND_ARTIFACT_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/marks_law_dependent_if
+CND_ARTIFACT_NAME_Debug=loan_payments
+CND_ARTIFACT_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/loan_payments
 CND_PACKAGE_DIR_Debug=dist/Debug/Cygwin_4.x-Windows/package
-CND_PACKAGE_NAME_Debug=markslawdependentif.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/package/markslawdependentif.tar
+CND_PACKAGE_NAME_Debug=loanpayments.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/package/loanpayments.tar
 # Release configuration
 CND_PLATFORM_Release=Cygwin_4.x-Windows
 CND_ARTIFACT_DIR_Release=dist/Release/Cygwin_4.x-Windows
-CND_ARTIFACT_NAME_Release=marks_law_dependent_if
-CND_ARTIFACT_PATH_Release=dist/Release/Cygwin_4.x-Windows/marks_law_dependent_if
+CND_ARTIFACT_NAME_Release=loan_payments
+CND_ARTIFACT_PATH_Release=dist/Release/Cygwin_4.x-Windows/loan_payments
 CND_PACKAGE_DIR_Release=dist/Release/Cygwin_4.x-Windows/package
-CND_PACKAGE_NAME_Release=markslawdependentif.tar
-CND_PACKAGE_PATH_Release=dist/Release/Cygwin_4.x-Windows/package/markslawdependentif.tar
+CND_PACKAGE_NAME_Release=loanpayments.tar
+CND_PACKAGE_PATH_Release=dist/Release/Cygwin_4.x-Windows/package/loanpayments.tar
 #
 # include compiler specific variables
 #

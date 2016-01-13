@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=Cygwin_4.x-Windows
 CND_ARTIFACT_DIR_Debug=dist/Debug/Cygwin_4.x-Windows
-CND_ARTIFACT_NAME_Debug=loan_payments
-CND_ARTIFACT_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/loan_payments
+CND_ARTIFACT_NAME_Debug=gaddis_8th_ed_chap3_prob19
+CND_ARTIFACT_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/gaddis_8th_ed_chap3_prob19
 CND_PACKAGE_DIR_Debug=dist/Debug/Cygwin_4.x-Windows/package
-CND_PACKAGE_NAME_Debug=loanpayments.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/package/loanpayments.tar
+CND_PACKAGE_NAME_Debug=gaddis8thedchap3prob19.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/Cygwin_4.x-Windows/package/gaddis8thedchap3prob19.tar
 # Release configuration
 CND_PLATFORM_Release=Cygwin_4.x-Windows
 CND_ARTIFACT_DIR_Release=dist/Release/Cygwin_4.x-Windows
-CND_ARTIFACT_NAME_Release=loan_payments
-CND_ARTIFACT_PATH_Release=dist/Release/Cygwin_4.x-Windows/loan_payments
+CND_ARTIFACT_NAME_Release=gaddis_8th_ed_chap3_prob19
+CND_ARTIFACT_PATH_Release=dist/Release/Cygwin_4.x-Windows/gaddis_8th_ed_chap3_prob19
 CND_PACKAGE_DIR_Release=dist/Release/Cygwin_4.x-Windows/package
-CND_PACKAGE_NAME_Release=loanpayments.tar
-CND_PACKAGE_PATH_Release=dist/Release/Cygwin_4.x-Windows/package/loanpayments.tar
+CND_PACKAGE_NAME_Release=gaddis8thedchap3prob19.tar
+CND_PACKAGE_PATH_Release=dist/Release/Cygwin_4.x-Windows/package/gaddis8thedchap3prob19.tar
 #
 # include compiler specific variables
 #

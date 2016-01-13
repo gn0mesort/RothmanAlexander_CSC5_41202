@@ -48,8 +48,7 @@ int main(int argc, char** argv) {
     //Output Results
     cout << fixed << showpoint << setprecision(2) << "Your payment will be:  $" 
          << payment << endl;
-    cout << fixed << showpoint << setprecision(2) << "The total interest is: $"
-         << totalInt << endl;
+    cout << "The total interest is: $" << totalInt << endl;
     
     //Exit
     return 0;

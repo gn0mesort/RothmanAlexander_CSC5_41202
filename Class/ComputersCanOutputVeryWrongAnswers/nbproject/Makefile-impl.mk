@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Savitch_8th_Ed_Chap2_Prob12
+PROJECTNAME=ComputersCanOutputVeryWrongAnswers
 
 # Active Configuration
 DEFAULTCONF=Debug

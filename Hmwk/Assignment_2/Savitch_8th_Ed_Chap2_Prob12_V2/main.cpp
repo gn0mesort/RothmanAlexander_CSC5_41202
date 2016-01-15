@@ -2,7 +2,7 @@
  * File:   main.cpp
  * Author: Alexander Rothman
  * Purpose: Calculate square roots the Babylonian way
- * Created on January 13, 2016, 10:46 AM
+ * Created on January 14, 2016, 10:46 AM
  * Version 2: Uses loop to end calculation
  */
 

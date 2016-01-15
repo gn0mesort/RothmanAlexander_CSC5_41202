@@ -33,15 +33,16 @@ int main(int argc, char** argv) {
     
     //Output Results
     cout << "Maximum Capacity: " << static_cast<int>(MAXCAP) << " seats" << endl;
-    if(delta >= 0){
+    if(delta >= 0){ //If the room is below capacity or at capacity
         cout << "Class will be held." << endl;
         cout << static_cast<int>(delta) << " seats remain." << endl;
         cout << fixed << setprecision(2) << showpoint 
              << static_cast<float>(stsUtil) / MAXCAP * 100.0f 
              << "% of space utilized." << endl;
     }
-    else{
+    else{ //If the room is over capacity
         cout << "Room capacity exceeded!!" << endl;
+        //Invert delta so you never have negative people
         cout << -static_cast<int>(delta) << " students over capacity." << endl;
         cout << fixed << setprecision(2) << showpoint 
              << static_cast<float>(stsUtil) / MAXCAP * 100.0f 

@@ -38,11 +38,13 @@ int main(int argc, char** argv) {
     cin >> intRate;
     
     //Calculate Output
-    intRate /= CNV_PER;
-    intRate /= CNV_MON;
-    float temp = pow(1 + intRate, numPay);
+    intRate /= CNV_PER; //Convert from percentage to floating point number
+    intRate /= CNV_MON; //Convert from percentage per year to percentage per month
+    float temp = pow(1 + intRate, numPay); //Calculate temporary value to avoid duplicate calculations
+    //Calculate amount per payment
     payment = ((intRate * temp) / 
               (temp - 1)) * loanAmt;
+    //Calculate total interest you will pay on the loan
     totalInt = (payment * numPay) - loanAmt;
     
     //Output Results

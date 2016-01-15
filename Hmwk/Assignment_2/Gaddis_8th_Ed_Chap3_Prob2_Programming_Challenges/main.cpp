@@ -1,6 +1,6 @@
 /* 
  * File:   main.cpp
- * Author: Alexander
+ * Author: Alexander Rothman
  * Purpose: Calculate income from ticket sales on stadium seating
  * Created on January 14, 2016, 5:27 AM
  */

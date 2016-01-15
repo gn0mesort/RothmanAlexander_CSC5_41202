@@ -1,6 +1,6 @@
 /* 
  * File:   main.cpp
- * Author: Alexander
+ * Author: Alexander Rothman
  * Purpose: Splenda is a scary horrible thing
  * Created on January 13, 2016, 7:54 PM
  */

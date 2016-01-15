@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     //Declare and Initialize Variables
     const unsigned char MAXCAP = 35; //Max capacity of the room
     char delta; //Difference between capacity and utilization
-    unsigned short  stsUtil; //Seats actually used
+    unsigned short stsUtil; //Seats actually used
     
     //Input Data
     cout << "How many seats are being utilized in BE200? ";

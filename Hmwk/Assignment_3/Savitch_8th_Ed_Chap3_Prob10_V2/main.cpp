@@ -19,11 +19,11 @@ using namespace std;
 //Begin Execution
 int main(int argc, char** argv) {
     //Savitch 8th Edition Chapter 3 Problem 10
-    //Solution is only precise to 47 terms
+    //Solution is only precise to 47 terms or 235 days
     //Declaration and Initialization
     const unsigned char DYSREP = 5; //The number of days to reproduce crud
-    unsigned short nDays, 
-                   nTerms;            
+    unsigned short nDays, //The number of days to allow crud reproduction
+                   nTerms; //The number of fibonnaci terms to generate
     unsigned int nFib, //The current number in the sequence
                  nLast, //The last number in the sequence
                  temp; //Temporary value used to hold the last number during calculation

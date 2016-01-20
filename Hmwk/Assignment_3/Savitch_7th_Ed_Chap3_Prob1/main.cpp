@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
     char comp, //The CPUs choice for this turn
             player, //The player's choice for this turn
             qstion; //Does the player want to continue playing?
-    unsigned short pScore = 0,
-                   cScore = 0;
+    unsigned short pScore = 0, //The player's score
+                   cScore = 0; //The computer's score
 
     srand(static_cast<int> (time(0))); //Seed the random number generator
 
@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 
     //Input Data
     do {
+        //Read Player input
         do {
             cout << "What is your move P, R, S? ";
             cin >> player;

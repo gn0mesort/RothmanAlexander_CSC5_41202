@@ -23,18 +23,17 @@ using namespace std;
 int main(int argc, char** argv) {
     //Declaration and Initialization
     unsigned char n1000s, //Number of 1000s
-            n100s, //Number of 100s
-            n10s, //Number of 10s
-            n1s; //Number of 1s
+                  n100s, //Number of 100s
+                  n10s, //Number of 10s
+                  n1s; //Number of 1s
     unsigned short cNum, //Number to Convert
-            temp;
+                   temp; //Hold he value of the first part of each calculation
 
     srand(static_cast<int> (time(0))); //Seed PRNG
-    cNum = rand() % 2001 + 1000;
+    cNum = rand() % 2001 + 1000; //Get a new number to convert
 
     cout << "Solution to Savitch 9th Ed. Chap3 Prob3" << endl;
     cout << "The Roman Number Conversion Program" << endl;
-    //Input Data
 
     //Calculate Output
     //Output original number
@@ -120,7 +119,6 @@ int main(int argc, char** argv) {
             cout << 'C';
         }
     }
-
     switch (n10s) { //Output 10s
         case 9:
         {

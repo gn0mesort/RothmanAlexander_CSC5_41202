@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     cin >> nTerms;
 
     //Calculate Output
-    for (int i = 1; i < nTerms; ++i) {
+    for (int i = 1; i < nTerms; ++i) { //Calculate the input number of terms
         if (i % 2 != 0) {
             if (add) {
                 pi += 4 * (1.0f / i);

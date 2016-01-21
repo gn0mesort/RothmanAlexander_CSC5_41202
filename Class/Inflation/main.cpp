@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     cout << "Fun Look at Inflation and rule of 72" << endl;
 
     //Output Results
-    cout << "INTEREST RATE: " << inflate * 100 << "%" << endl;
+    cout << "INFLATION RATE: " << inflate * 100 << "%" << endl;
     cout << "DOUBLING TIME: " << rule72 << " years" << endl;
     //Output Table
     cout << "YEAR YEAR PRICE   INFLATION" << endl; //Table Heading

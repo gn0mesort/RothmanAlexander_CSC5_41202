@@ -59,10 +59,7 @@ int main(int argc, char** argv) {
                 cout << "AREA: " << base * height * 0.5f << endl;
                 break;
             }
-            default:
-            {
-                
-            }
+            default: { }
         }
     } while (choice != 4);
     

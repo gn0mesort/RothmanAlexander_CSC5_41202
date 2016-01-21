@@ -62,18 +62,9 @@ int main(int argc, char** argv) {
     cout << "NUMBER OF 1S:    " << static_cast<int> (n1s) << endl;
     cout << "THE ROMAN NUMERAL EQUIVALENT: ";
     switch (n1000s) { //Output 1000s
-        case 3:
-        {
-            cout << 'M';
-        }
-        case 2:
-        {
-            cout << 'M';
-        }
-        case 1:
-        {
-            cout << 'M';
-        }
+        case 3: { cout << 'M'; }
+        case 2: { cout << 'M'; }
+        case 1: { cout << 'M'; }
     }
     switch (n100s) { //Output 100s
         case 9:
@@ -106,18 +97,9 @@ int main(int argc, char** argv) {
             cout << "CD";
             break;
         }
-        case 3:
-        {
-            cout << 'C';
-        }
-        case 2:
-        {
-            cout << 'C';
-        }
-        case 1:
-        {
-            cout << 'C';
-        }
+        case 3: { cout << 'C'; }
+        case 2: { cout << 'C'; }
+        case 1: { cout << 'C'; }
     }
     switch (n10s) { //Output 10s
         case 9:
@@ -150,18 +132,9 @@ int main(int argc, char** argv) {
             cout << "XL";
             break;
         }
-        case 3:
-        {
-            cout << 'X';
-        }
-        case 2:
-        {
-            cout << 'X';
-        }
-        case 1:
-        {
-            cout << 'X';
-        }
+        case 3: { cout << 'X'; }
+        case 2: { cout << 'X'; }
+        case 1: { cout << 'X'; }
     }
     switch (n1s) { //Output 1s
         case 9:
@@ -194,18 +167,9 @@ int main(int argc, char** argv) {
             cout << "IV";
             break;
         }
-        case 3:
-        {
-            cout << 'I';
-        }
-        case 2:
-        {
-            cout << 'I';
-        }
-        case 1:
-        {
-            cout << 'I';
-        }
+        case 3: { cout << 'I'; }
+        case 2: { cout << 'I'; }
+        case 1: { cout << 'I'; }
     }
     cout << endl; //End line
 

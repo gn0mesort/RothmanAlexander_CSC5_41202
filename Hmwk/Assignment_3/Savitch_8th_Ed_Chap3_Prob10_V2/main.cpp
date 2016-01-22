@@ -29,10 +29,11 @@ int main(int argc, char** argv) {
                  temp; //Temporary value used to hold the last number during calculation
     float crdWght; //The weight of the crud in pounds
 
+    //Problem Information
+    cout << "Solution to Problem Savitch 8th Ed. Chap 3 Prob 10" << endl;
+    cout << "THE FIBONNACI SEQUENCE" << endl;
+    
     //Input Data
-    cout << "Solution to Problem Savitch 8th Ed. Chap 3 Prob 10"
-            << endl;
-    cout << "THE FIBONNACI SEQUENCE" << endl << endl;
     cout << "Input a number of days for crud production: ";
     cin >> nDays;
     cout << "Input the current weight of the crud in pounds: ";

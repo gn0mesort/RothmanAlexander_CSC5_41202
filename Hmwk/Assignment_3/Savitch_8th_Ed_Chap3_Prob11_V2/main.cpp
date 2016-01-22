@@ -19,7 +19,6 @@ using namespace std;
 
 
 //Begin Execution
-
 int main(int argc, char** argv) {
     //Declaration and Initialization
     const unsigned char NTERMS = 13;

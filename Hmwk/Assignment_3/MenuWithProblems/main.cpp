@@ -593,7 +593,7 @@ int main(int argc, char** argv) {
             }
             case 9:
             {
-                //Gaddis 8th Ed. Chap4 Prob3
+                //Gaddis 8th Ed. Chap4 Prob12
                 //Declaration and Initialization
                 const unsigned short PRICE = 99; //The price of 1 unit of software in dollars
                 const float DSCT1 = 0.2f, //The first discount tier
@@ -605,7 +605,7 @@ int main(int argc, char** argv) {
                 float dsc; //The discount for the quantity being purchased
                 
                 //Problem Information
-                cout << "Solution to Gaddis 8th Ed. Chap4 Prob3" << endl;
+                cout << "Solution to Gaddis 8th Ed. Chap4 Prob12" << endl;
                 cout << "Software Purchase Discount Calculator" << endl;
                 
                 //Input Data

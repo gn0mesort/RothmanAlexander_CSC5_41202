@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     float dsc; //The discount for the quantity being purchased
     
     //Problem Information
-    cout << "Gaddis 8th Ed Chap4 Prob3" << endl;
+    cout << "Gaddis 8th Ed Chap4 Prob12" << endl;
     cout << "Software Purchase Discount Calculator" << endl;
     
     //Input Data

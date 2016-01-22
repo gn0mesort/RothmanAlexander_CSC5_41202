@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
     srand(static_cast<int> (time(0))); //Seed the random number generator
 
-    //Output Header
+    //Problem Information
     cout << "Solution to Savitch 7th Ed. Chap3 Prob1" << endl;
     cout << "The ROCK-PAPER-SCISSORS Game" << endl;
 

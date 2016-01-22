@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     srand(static_cast<int> (time(0))); //Seed PRNG
     cNum = rand() % 2001 + 1000; //Get a new number to convert
 
+    //Problem Information
     cout << "Solution to Savitch 9th Ed. Chap3 Prob3" << endl;
     cout << "The Roman Number Conversion Program" << endl;
 

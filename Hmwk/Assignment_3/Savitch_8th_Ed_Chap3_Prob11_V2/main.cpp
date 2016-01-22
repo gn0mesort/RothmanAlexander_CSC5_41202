@@ -27,6 +27,10 @@ int main(int argc, char** argv) {
     float eToX = 1, //e^x
             x; //The number to raise e to
 
+    //Problem Information
+    cout << "Savitch 8th Ed. Chap3 Prob11" << endl;
+    cout << "Calculate e^x" << endl;
+    
     //Input Data
     //Read in x
     cout << "NUMBERS MUST BE BETWEEN 1 AND 13" << endl;

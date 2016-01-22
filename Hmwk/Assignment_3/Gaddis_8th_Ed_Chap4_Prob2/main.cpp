@@ -5,20 +5,35 @@
  * Created on January 19, 2016, 7:25 PM
  */
 
+//System Libraries
 #include <iostream>
 
 using namespace std;
 
+//User Libraries
+
+//Global Constants
+
+//Function Prototypes
+
+//Begin Execution
 int main(int argc, char** argv) {
-    unsigned short inNum;
-    string roman;
+    //Declaration and Initializatin
+    unsigned short inNum; //The input number 1-10
+    string roman; //The number as a roman numeral
     
-    do{
+    //Problem Information
+    cout << "Gaddis 8th Ed Chap4 Prob2" << endl;
+    cout << "Roman Numeral Converter" << endl;
+    
+    //Input Data
+    do{ //Input Validation
     cout << "Enter a number between 1 and 10: ";
     cin >> inNum;
     } while(inNum > 10 || inNum < 1);
     
-    switch(inNum){
+    //Calculate Output
+    switch(inNum){ //Convert inNum to a roman numeral
         case 1:
         {
             roman = "I";
@@ -75,8 +90,10 @@ int main(int argc, char** argv) {
         }
     }
     
+    //Output Results
     cout << "The roman numeral for " << inNum << " is " << roman << endl;
     
+    //Exit
     return 0;
 }
 

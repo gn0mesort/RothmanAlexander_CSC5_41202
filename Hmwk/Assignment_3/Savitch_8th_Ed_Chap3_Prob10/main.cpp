@@ -26,10 +26,11 @@ int main(int argc, char** argv) {
                  nLast, //The last number in the sequence
                  temp; //Temporary value used to hold the last number during calculation
 
+    //Problem Information
+    cout << "Solution to Problem Savitch 8th Ed. Chap3 Prob10" << endl;
+    cout << "THE FIBONNACI SEQUENCE" << endl;
+    
     //Input Data
-    cout << "Solution to Problem Savitch 8th Ed. Chap 3 Prob 10"
-            << endl;
-    cout << "THE FIBONNACI SEQUENCE" << endl << endl;
     cout << "Input a number of terms to display: ";
     cin >> nTerms;
 

@@ -20,6 +20,8 @@ int main(int argc, char** argv) {
     cin >> years;
     } while(years <= 0);
     
+    cout << "Input each month of data for each year." << endl;
+    cout << "All measurements in inches" << endl;
     for(int i = 0; i < years; ++i){
         for(int j = 0; j < 12; ++j){
             cout << "RAINFALL FOR MONTH " << j + 1 << " OF YEAR " << i + 1 
@@ -32,8 +34,8 @@ int main(int argc, char** argv) {
     aRnFl = tRnFl / (12 * years);
     
     cout << "TOTAL YEARS:      " << years << endl;
-    cout << "TOTAL RAINFALL:   " << tRnFl << endl;
-    cout << "AVERAGE RAINFALL: " << aRnFl << endl;
+    cout << "TOTAL RAINFALL:   " << tRnFl << " inches" << endl;
+    cout << "AVERAGE RAINFALL: " << aRnFl <<  " inches / month" << endl;
     
     return 0;
 }

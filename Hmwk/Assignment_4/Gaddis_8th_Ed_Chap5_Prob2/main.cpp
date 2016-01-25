@@ -5,26 +5,39 @@
  * Created on January 22, 2016, 2:30 PM
  */
 
+//System Libraries
 #include <iostream>
 #include <iomanip>
 
 using namespace std;
 
+//User Libraries
+
+//Global Constants
+
+//Function Prototypes
+
+//Begin Execution
 int main(int argc, char** argv) {
-    const unsigned char NUMCHAR = 128,
-            CHARROW = 16,
-            NUMROW = NUMCHAR / CHARROW;
+    //Declaration and Initialization
+    const unsigned char NUMCHAR = 128, //The number of character total to print
+                        CHARROW = 16, //The number of characters per row
+                        NUMROW = NUMCHAR / CHARROW; //The number of rows
     
+    //Output Results
+    //Table Header
     cout << "THE ASCII TABLE 0 to 127" << endl;
-    for(int i = 0; i < NUMROW; ++i){
-        for(int curPos = 0; curPos < CHARROW; ++curPos){
+    //Table
+    for(int i = 0; i < NUMROW; ++i){ //Output table rows
+        for(int curPos = 0; curPos < CHARROW; ++curPos){ //Output the current position in the table in one row
+            //Calculate the current position by adding the number of characters per row * the row + the position in the current row
             cout << setw(4) << static_cast<int>(curPos + (CHARROW * i)) 
-                    << " ";
+                 << " ";
         }
         cout << endl;
-        for(int curChar = 0; curChar < CHARROW; ++curChar){
-            if(curChar + (CHARROW * i) < 32 || curChar + (CHARROW * i) == 127){
-                switch(curChar + (CHARROW * i)){
+        for(int curChar = 0; curChar < CHARROW; ++curChar){ //Output the current character
+            if(curChar + (CHARROW * i) < 32 || curChar + (CHARROW * i) == 127){ //If the current character is a non-printing character
+                switch(curChar + (CHARROW * i)){ //Convert nonprinting characters to string indicator
                     case 0:
                     {
                         cout << setw(4) << "NUL" << " ";
@@ -194,13 +207,14 @@ int main(int argc, char** argv) {
                     
                 }
             }
-            else {
+            else { //Output a printable character
                 cout << setw(4) << static_cast<char>(curChar + (CHARROW * i)) << " ";
             }
         }
         cout << endl;    
     }
     
+    //Exit
     return 0;
 }
 

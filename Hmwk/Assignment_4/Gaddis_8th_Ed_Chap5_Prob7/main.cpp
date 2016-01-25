@@ -35,8 +35,8 @@ int main(int argc, char** argv) {
     cout << setw(4) << 1 << setw(15) << salary / 100.0f 
          << setw(15) << tPay / 100.0f << endl;
     for(int day = 2; day <= 31; ++day){
-        //salary *= 2;
-        salary <<= 1; //Bitwise Right Shift equivalent to * 2
+        salary *= 2;
+        //salary <<= 1; //Bitwise Right Shift equivalent to * 2
         tPay += salary;
         cout << setw(4) << day << setw(15) << salary / 100.0 
              << setw(15) << tPay / 100.0 << endl;

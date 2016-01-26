@@ -23,7 +23,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const ;unsigned short GAMES = 36000;
+    const unsigned short GAMES = 36000;
     unsigned char die1, //The first die
             die2, //The second die
             sum; //The sum of both dies

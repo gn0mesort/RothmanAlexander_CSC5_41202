@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     //Timing variables
     int begin, //Begin time
         end, //End time
-        loop = 100000000; //Number of times to preform each process
+        loop = 200000000; //Number of times to preform each process
     //Declaration and Initialization
     int x, //Base of the problem
         y, //Exponent of the problem

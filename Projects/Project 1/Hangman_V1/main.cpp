@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     //Declaration and Initialization
     char cPlay, //Indicates whether or not to continue playing
          guess; //The current guess
-    unsigned char gCount = 6; //The number of guesses remaining
+    unsigned char gCount; //The number of guesses remaining
     string word, //The actual word
             dsp; //The displayed string
     
@@ -41,7 +41,9 @@ int main(int argc, char** argv) {
             cout << "INPUT A WORD: ";
             cin >> word;
         } while (!isword(word));
+        word = tocaps(word);
         dsp = mask(word, '_');
+        gCount = 6;
         
         //Clear the screen
         clearbuffer();
@@ -52,6 +54,7 @@ int main(int argc, char** argv) {
             cout << dsp << endl;
             cout << "GUESS: ";
             cin >> guess;
+            guess = toupper(guess);
             if (contains(word, guess)) {
                 dsp = unmask(dsp, word, guess);
             } else {

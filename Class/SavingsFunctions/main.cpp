@@ -27,10 +27,12 @@ float save4(float, float, int); //Banking for loop
 float save5(float, float, int); //Recursion
 float save6(float, int, float = 0.05f); //Defaulted
 float save7(float, float, int); //Static Variable
+void save8(float, float, int, float&); //Power Function
 
 int main(int argc, char** argv) {
     //Declaration and Initialization
     float pv, //The present value
+          fv, //The future value
           intRate; //The interest rate
     char nComp; //The number of compounding periods
     
@@ -68,7 +70,11 @@ int main(int argc, char** argv) {
     save7(pv, intRate / PERCENT, nComp);
     cout << "SAVINGS USING FOR LOOP STATIC VARIABLE:                    $" 
          << save7(pv, intRate / PERCENT, nComp) << endl;
-    
+    //Banking For Loop with pass by reference
+    save8(pv, intRate / PERCENT, nComp, fv);
+    cout << "PASS BY REFERENCE" << endl;
+    cout << "SAVINGS USING FOR LOOP FUNCTION BANKING VERSION:           $" 
+         << fv << endl;
     
     return 0;
 }
@@ -187,4 +193,23 @@ float save7(float pv, float i, int n){
     ++nCalls;
     cout << "SAVE 7 STATIC COUNTER: " << nCalls << endl;
     return pv;
+}
+
+/******************************************************************************/
+/***********************************SAVE8**************************************/
+/******************************************************************************/
+//Inputs
+// pv -> Present value in $'s
+// i -> Interest rate in %
+// n -> Number of compounding periods
+//Output
+// fv -> Future value in $'s
+//Note: For loop banking version with reference output
+void save8(float pv, float i, int n, float &fv){
+    int ip = pv * PERCENT; //Convert to pennies
+    for(int years = 1; years <= n; ++years){
+        ip *= (1 + i);
+    }
+    
+    fv = static_cast<float>(ip) / PERCENT; //Convert back to dollars and return
 }

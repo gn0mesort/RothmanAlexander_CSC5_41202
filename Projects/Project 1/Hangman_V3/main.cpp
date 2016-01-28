@@ -20,6 +20,7 @@ using namespace std;
 //Global Constants
 
 //Function 
+void gsort(char[], int);
 void savescores(string, unsigned short, unsigned short);
 unsigned char choosedifficulty();
 bool playgame(char, string);
@@ -40,12 +41,14 @@ char menu(void);
 
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const string SCORES = "scores.dat",
-            HELP = "help.txt",
-            WORDS = "words.txt";
+    const char SCORES[] = "scores.dat",
+               HELP[] = "help.txt",
+               WORDS[] = "words.txt";
+    
     bool quit = false;
+    char diff;
     unsigned short wins = 0,
-            tGames = 0;
+                   tGames = 0;
     float wlr;
 
     srand(static_cast<int> (time(0))); //Seed PRNG
@@ -88,6 +91,23 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+void gsort(char cArr[], int length){
+    for(int pos = 1, last = 0; pos < length;){
+        if(cArr[pos] >= cArr[pos - 1] && cArr[pos] != '\0'){
+            if(last != 0){
+                pos = last;
+                last = 0;
+            }
+            ++pos;
+        }
+        else{
+            cArr[pos] = cArr[pos] ^ cArr[pos - 1];
+            cArr[pos - 1] = cArr[pos] ^ cArr[pos -1];
+            cArr[pos] = cArr[pos] ^ cArr[pos - 1];
+        }
+    }
+}
+
 void savescores(string path, unsigned short wins, unsigned short tGames) {
     ofstream ofile;
 
@@ -100,10 +120,10 @@ void savescores(string path, unsigned short wins, unsigned short tGames) {
 
 unsigned char choosedifficulty() {
     const unsigned char DIFF_E = 1,
-            DIFF_M = 2,
-            DIFF_H = 4;
+                        DIFF_M = 2,
+                        DIFF_H = 4;
     char choice;
-    string input;
+    char input[7];
     cout << "CHOOSE A DIFFICULTY: " << endl;
     cout << "(E)ASY" << endl;
     cout << "(M)edium" << endl;
@@ -111,7 +131,7 @@ unsigned char choosedifficulty() {
     do {
         cout << "> ";
         cin >> input;
-        choice = toupper(input.at(0));
+        choice = toupper(input[0]);
     } while (!(choice != 'E' || choice != 'M' || choice != 'H'));
     switch (choice) {
         case 'E': return DIFF_E;
@@ -135,11 +155,14 @@ int countfilelines(string path) {
 }
 
 bool playgame(char diff, string wdlist) {
-    const unsigned char DGUESS = 24;
+    const unsigned char DGUESS = 24,
+                        ALPHALEN = 27;
     unsigned char gCount;
-    char guess;
+    char guess,
+         usedPos = 0;
     string oWord,
-            mWord;
+           mWord;
+    char cUsed[ALPHALEN] = {};
 
     oWord = getword(wdlist);
     mWord = mask(oWord, '_');
@@ -148,11 +171,17 @@ bool playgame(char diff, string wdlist) {
     do {
         cout << mWord << endl;
         cout << "REMAINING GUESSES: " << static_cast<int> (gCount) << endl;
+        cout << "USED CHARACTERS:" << endl;
+        cout << cUsed << endl;
         guess = getguess();
         if (contains(oWord, guess)) {
             mWord = unmask(mWord, oWord, guess);
         } else {
             --gCount;
+        }
+        cUsed[usedPos] = guess;
+        if(usedPos++ > 0){
+        gsort(cUsed, ALPHALEN);
         }
     } while (gCount > 0 && mWord != oWord);
 
@@ -262,14 +291,14 @@ string getword(string path) {
 }
 
 char getguess() {
-    char r;
+    char input[2];
     do {
         cout << "GUESS: ";
-        cin >> r;
-        r = toupper(r);
-    } while (r < 'A' && r > 'Z');
+        cin >> input;
+        input[0] = toupper(input[0]);
+    } while (input[0] < 'A' && input[0] > 'Z');
 
-    return r;
+    return input[0];
 }
 
 char menu() {

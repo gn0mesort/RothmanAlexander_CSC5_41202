@@ -2,12 +2,14 @@
  * File:   main.cpp
  * Author: Alexander Rothman
  *
- * Created on January 26, 2016, 10:27 AM
+ * Created on January 28, 2016, 9:28 AM
  */
 
 //System Libraries
 #include <cstdlib>
+#include <ctime>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <fstream>
 

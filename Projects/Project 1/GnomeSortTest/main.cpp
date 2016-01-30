@@ -5,12 +5,21 @@
  * Created on January 29, 2016, 9:53 PM
  */
 
+//System Libraries
 #include <cstdlib>
 #include <iostream>
 
 using namespace std;
 
+//User Libraries
+
+//Global Constants
+
+//Function Prototypes
+
+//Begin Execution
 int main(int argc, char** argv) {
+    //Declaration and Initialization
     const unsigned char LENGTH = 27; //Length
     char cArr[LENGTH] = {0}; //String
     
@@ -26,7 +35,7 @@ int main(int argc, char** argv) {
         if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){
             ++pos;
         }
-        else if (cArr[pos] <= cArr[pos - 1] && cArr[pos] != '\0'){
+        else if (cArr[pos] <= cArr[pos - 1]){
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos - 1] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
@@ -37,6 +46,7 @@ int main(int argc, char** argv) {
     }
     cout << cArr << endl; //Output sorted array
     
+    //Exit
     return 0;
 }
 

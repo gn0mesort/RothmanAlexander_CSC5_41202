@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
 
 //int charcount(char[], int)
 //Character Count
+//Counts the printable characters in a character array
 //Input:
 //  word[] : an array of characters to be counted
 //  size : the size of the input array

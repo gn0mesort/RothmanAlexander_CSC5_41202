@@ -149,7 +149,8 @@ bool playgame(char diff, string wdlist) {
         guess = getguess();
         if (contains(oWord, guess)) {
             mWord = unmask(mWord, oWord, guess);
-        } else {
+        } 
+        else {
             --gCount;
         }
     } while (gCount > 0 && mWord != oWord);

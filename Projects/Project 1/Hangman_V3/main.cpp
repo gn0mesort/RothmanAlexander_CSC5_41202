@@ -28,6 +28,10 @@ void mask(int, const char[], char[], char); //Creates a masked version of the in
 void unmask(int, const char[], char[], char); //Unmasks a specific character based on the original word
 bool isequal(const char[], const char[], int);
 //Game Functions
+void readoptions(unsigned char&, unsigned char&, const char[]);
+void saveoptions(unsigned char, unsigned char, const char[]);
+void showscores(short, short, short, float, const char[]);
+void savescores(short, short, short, float, const char[]);
 char menu(void); //Do the basic game menu processing
 bool playgame(unsigned char, unsigned char); //Do the game processing
 void options(unsigned char&, unsigned char&);
@@ -36,6 +40,8 @@ void getword(unsigned char, char[], int&); //Get a word from the corresponding w
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
+    const char SCORES[] = "scores.dat",
+               CONFIG[] = "config.dat";
     const unsigned char DIFF_E = 1, //Easy Difficulty
                         DIFF_M = 2, //Medium Difficulty
                         DIFF_H = 4; //Hard Difficulty
@@ -48,6 +54,7 @@ int main(int argc, char** argv) {
     float wlr = 0.0f;
     
     srand(static_cast<int>(time(0))); //Seed PRNG
+    readoptions(diff, mChar, CONFIG);
     
     //Game Loop
     do{
@@ -56,20 +63,24 @@ int main(int argc, char** argv) {
             {
                 playgame(diff, mChar) ? ++win : ++lose;
                 ++tGames;
-                wlr = static_cast<float>(win) / lose;
+                wlr =  lose != 0 ? static_cast<float>(win) / lose 
+                                 : static_cast<float>(win) / (lose + 1);
                 break;
             }
             case 'S': //Display Scores
             {
+                showscores(win, lose, tGames, wlr, SCORES);
                 break;
             }
             case 'O': //Display Options
             {
-                //options(diff&, mChar&);
+                options(diff, mChar);
                 break;
             }
             case 'Q': //Quit
             {
+                saveoptions(diff, mChar, CONFIG);
+                savescores(win, lose, tGames, wlr, SCORES);
                 quit = true;
             }
         }
@@ -79,9 +90,140 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+void readoptions(unsigned char &diff, unsigned char &mChar, const char path[]){
+    char input[3] = {0};
+    ifstream iFile;
+    
+    iFile.open(path);
+    iFile.getline(input, 3, '\n');
+    diff = input[0];
+    iFile.getline(input, 3, '\n');
+    mChar = input[0];
+}
+
+void saveoptions(unsigned char diff, unsigned char mChar, const char path[]){
+    ofstream oFile;
+    
+    oFile.open(path);
+    oFile << diff << endl;
+    oFile << mChar << endl;
+    oFile.close();
+}
+
+void options(unsigned char &diff, unsigned char &mChar){
+    char choice;
+    char input[15] = {0};
+    cout << "Options:" << setw(20) << "(D)ifficulty" 
+         << setw(20) << "(M)ask Character" << setw(10) << "(H)elp" << endl;
+    do{
+        cout << "> ";
+        cin >> input;
+        choice = toupper(input[0]);
+    } while(choice != 'D' && choice != 'M' && choice != 'H');
+    switch(choice){
+        case 'D':
+        {
+            char temp;
+            cout << "CURRENT DIFFICULTY: ";
+            if(diff == 1){
+                cout << "EASY" << endl;
+            }
+            else if (diff == 2){
+                cout << "MEDIUM" << endl;
+            }
+            else{
+                cout << "HARD" << endl;
+            }
+            cout << "Modes: " << "(E)asy (M)edium (H)ard" << endl; 
+            do{
+                cout << "> ";
+                cin >> input;
+                temp = toupper(input[0]);
+            }while(temp != 'E' && temp != 'M' && temp != 'H');
+                switch(temp){
+                    case 'E':
+                    {
+                        diff = 1;
+                        break;
+                    }
+                    case 'M':
+                    {
+                        diff = 2;
+                        break;
+                    }
+                    case 'H':
+                    {
+                        diff = 4;
+                        break;
+                    }
+                }
+            cout << "CURRENT DIFFICULTY: ";
+            if(diff == 1){
+                cout << "EASY" << endl;
+            }
+            else if (diff == 2){
+                cout << "MEDIUM" << endl;
+            }
+            else{
+                cout << "HARD" << endl;
+            }
+            break;
+        }
+        case 'M':
+        {
+            cout << "CURRENT MASK CHARACTER: " << mChar << endl;
+            do{
+                cout << "> ";
+                cin >> input;
+                if((input[0] > ' ' && input[0] < 'A') || 
+                   (input[0] > 'Z' && input[0] < 'a') || 
+                   (input[0] > 'z' && input[0] < 127)){
+                    mChar = input[0];
+                }
+                else{
+                    cout << "> INVALID INPUT" << endl;
+                }
+            } while((input[0] < ' ' && input[0] > 'A') || 
+                    (input[0] < 'Z' && input[0] > 'a') || 
+                    (input[0] < 'z' && input[0] > 127));
+            cout << "CURRENT MASK CHARACTER: " << mChar << endl;
+            break;
+        }
+        case 'H':
+        {
+            displayfile("help.dat");
+            break;
+        }
+    }
+}
+
+void savescores(short win, short lose, short tGames, float wlr, 
+                const char path[]){
+    ofstream oFile;
+    time_t rawTime;
+    if(tGames > 0){
+        time(&rawTime);
+    
+        oFile.open(path, fstream::app);
+        oFile << ctime(&rawTime) << "SCORES: " << win << " : " << lose << endl;
+        oFile << "TOTAL GAMES: " << tGames << endl;
+        oFile << "RATIO: " << wlr << endl;
+        oFile.close();
+    }
+}
+
+void showscores(short win, short lose, short tGames, float wlr, 
+                const char path[]){
+    cout << "CURRENT GAME:" << endl;
+    cout << "SCORES: " << win << " : " << lose <<  endl;
+    cout << "TOTAL GAMES: " << tGames << endl;
+    cout << "RATIO: " << wlr << endl;
+    displayfile(path);
+}
+
 bool isequal(const char word1[], const char word2[], int length){
     for(int i = 0; i < length; ++i){
-        if(word1[i] != word2[i]){
+        if(word1[i] != word2[i] && word1[i] != '\0'){
             return false;
         }
     }
@@ -168,20 +310,21 @@ bool playgame(unsigned char diff, unsigned char mChar){
          usedPos = 0,
          guess;
     int length;
-    char word[WDLNGTH],
+    char word[WDLNGTH] = {0},
+         mWord[WDLNGTH] = {0},
          used[ALPHA] = {0};
          
     getword(diff, word, length);
-    char mWord[WDLNGTH] = {0};
     mask(length, word, mWord, mChar);
     
     do{
+        char input[2];
         cout << mWord << endl;
         cout << "REMAINING GUESSES:" << static_cast<int>(gCount) << endl;
         cout << "USED CHARACTERS: " << used << endl;
         cout << "> ";
-        cin >> guess;
-        guess = tolower(guess);
+        cin >> input;
+        guess = tolower(input[0]);
         if(contains(word, WDLNGTH, guess)){
             unmask(length, word, mWord, guess);
         }

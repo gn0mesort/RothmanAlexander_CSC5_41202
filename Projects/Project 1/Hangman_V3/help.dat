@@ -1,0 +1,32 @@
+HANGMAN HELP:
+
+MENU NAVIGATION:
+	To navigate menus in Hangman simply enter the first letter of the option you choose.
+	This each valid option will appear in the menu surrounded by a pair of parentheses.
+	For example: (P)lay
+	To play the game simply enter P or p.
+	Hangman accepts longer input but only the first character is considered in program logic.
+HOW TO PLAY:
+	In hangman you try to guess a word character by character.
+	During gameplay enter one character at a time as a guess.
+	You may input more than one character but only the first character will be considered.
+	During each game you have a number of guesses based on difficulty.
+	On easy you will have enough guesses to try almost every character possible.
+	When you guess correctly you will not lose any of your remaining guesses.
+	However, should you guess incorrectly you will lose one remaining guess.
+	If you run out of guesses you lose the game.
+	If you complete the word before that you will win.
+DIFFICULTY SETTINGS:
+	EASY:
+		24 Guesses
+		Short words
+	MEDIUM:
+		12 Guesses
+		Medium words
+	HARD:
+		6 Guesses
+		Long words
+MODIFICATION:
+	Hangman may be modified. It is suggested that you only modify the word list. 
+	You may add words no longer than the length of the longest word in the current list.
+	Words longer than the current limit will be truncated.

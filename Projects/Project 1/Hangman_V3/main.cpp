@@ -19,23 +19,23 @@ using namespace std;
 //Global Constants
 
 //Function Prototypes
-void gsort(char[], int); //Gnome Sort a character array
-bool isword(const char[], int); //Determine if a string is a word
-bool contains(const char[], int, char); //Determine if a string contains a character
-void displayfile(const char[]); //Display file data line by line
-int countlines(const char[]); //Count the number of lines in a file
-void mask(int, const char[], char[], char); //Creates a masked version of the input word
-void unmask(int, const char[], char[], char); //Unmasks a specific character based on the original word
+void gsort(char[], int);
+bool isword(const char[], int); 
+bool contains(const char[], int, char); 
+void displayfile(const char[]);
+int countlines(const char[]); 
+void mask(int, const char[], char[], char); 
+void unmask(int, const char[], char[], char); 
 bool isequal(const char[], const char[], int);
 //Game Functions
 void readoptions(unsigned char&, unsigned char&, const char[]);
 void saveoptions(unsigned char, unsigned char, const char[]);
 void showscores(short, short, short, float, const char[]);
 void savescores(short, short, short, float, const char[]);
-char menu(void); //Do the basic game menu processing
-bool playgame(unsigned char, unsigned char); //Do the game processing
-void options(unsigned char&, unsigned char&); //Do option menu processing
-void getword(unsigned char, char[], int&); //Get a word from the corresponding word list at random
+char menu(void);
+bool playgame(unsigned char, unsigned char); 
+void options(unsigned char&, unsigned char&); 
+void getword(unsigned char, char[], int&);
 
 //Begin Execution
 int main(int argc, char** argv) {
@@ -90,41 +90,72 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+/******************************************************************************/
+/********************************Read Options**********************************/
+/******************************************************************************/
+//  Read the current game configuration from a file
+//Inputs
+//  &diff : The current difficulty setting
+//  &mChar : The current masking character
+//  path : The location of the file you're reading from
 void readoptions(unsigned char &diff, unsigned char &mChar, const char path[]){
-    char input[3] = {0};
-    ifstream iFile;
+    char input[3] = {0}; //input array for file reading
+    ifstream iFile; //input file stream
     
-    iFile.open(path);
-    iFile.getline(input, 3, '\n');
-    diff = input[0];
-    iFile.getline(input, 3, '\n');
-    mChar = input[0];
+    iFile.open(path); //open the file
+    iFile.getline(input, 3, '\n'); //read the first value
+    diff = input[0]; //grab the difficulty out of the first value
+    iFile.getline(input, 3, '\n'); //read the second value
+    mChar = input[0]; //grab the masking character 
+    iFile.close(); //close the file
 }
 
+/******************************************************************************/
+/********************************Save Options**********************************/
+/******************************************************************************/
+//  Write the current game configuration to a file
+//Inputs
+//  diff : The current difficulty setting
+//  mChar : The current masking character
+//  path : The location of the file you're writing to
 void saveoptions(unsigned char diff, unsigned char mChar, const char path[]){
-    ofstream oFile;
+    ofstream oFile; //Output file stream
     
-    oFile.open(path);
-    oFile << diff << endl;
-    oFile << mChar << endl;
-    oFile.close();
+    oFile.open(path); //open file
+    oFile << diff << endl; //Output difficulty
+    oFile << mChar << endl; //Output masking character
+    oFile.close(); //close file
 }
 
+/******************************************************************************/
+/********************************Options***************************************/
+/******************************************************************************/
+//  Display and handle options menu
+//Inputs
+//  &diff : The current difficulty setting
+//  &mChar : The current masking character
 void options(unsigned char &diff, unsigned char &mChar){
-    char choice;
-    char input[15] = {0};
+    char choice; //The chosen option
+    char input[15] = {0}; //The input string to get the choice from
+    
+    //Output menu
     cout << "Options:" << setw(20) << "(D)ifficulty" 
          << setw(20) << "(M)ask Character" << setw(10) << "(H)elp" << endl;
-    do{
+    
+    //Input data
+    do{ //Input validation
         cout << "> ";
         cin >> input;
-        choice = toupper(input[0]);
+        choice = toupper(input[0]); //get choice from input's first character
     } while(choice != 'D' && choice != 'M' && choice != 'H');
-    switch(choice){
-        case 'D':
+    
+    switch(choice){ //choose based on the value of choice
+        case 'D': //Change the difficulty
         {
-            char temp;
+            char temp; //The choice for the second switch
+            
             cout << "CURRENT DIFFICULTY: ";
+            //Covert difficulty to text
             if(diff == 1){
                 cout << "EASY" << endl;
             }
@@ -134,29 +165,32 @@ void options(unsigned char &diff, unsigned char &mChar){
             else{
                 cout << "HARD" << endl;
             }
+            //Output availaible modes
             cout << "Modes: " << "(E)asy (M)edium (H)ard" << endl; 
+            //Input data
             do{
                 cout << "> ";
                 cin >> input;
-                temp = toupper(input[0]);
+                temp = toupper(input[0]); //get choice from input
             }while(temp != 'E' && temp != 'M' && temp != 'H');
-                switch(temp){
-                    case 'E':
-                    {
-                        diff = 1;
-                        break;
-                    }
-                    case 'M':
-                    {
-                        diff = 2;
-                        break;
-                    }
-                    case 'H':
-                    {
-                        diff = 4;
-                        break;
-                    }
+            
+            switch(temp){ //Choose based on second choice
+                case 'E': //Set difficulty to easy
+                {
+                    diff = 1;
+                    break;
                 }
+                case 'M': //Set difficulty to medium
+                {
+                    diff = 2;
+                    break;
+                }
+                case 'H': //Set difficulty to hard
+                {
+                    diff = 4;
+                    break;
+                }
+            }
             cout << "CURRENT DIFFICULTY: ";
             if(diff == 1){
                 cout << "EASY" << endl;
@@ -169,18 +203,19 @@ void options(unsigned char &diff, unsigned char &mChar){
             }
             break;
         }
-        case 'M':
+        case 'M': //Change the masking character
         {
             cout << "CURRENT MASK CHARACTER: " << mChar << endl;
-            do{
+            //Input Data
+            do{ //Input Validation
                 cout << "> ";
                 cin >> input;
                 if((input[0] > ' ' && input[0] < 'A') || 
                    (input[0] > 'Z' && input[0] < 'a') || 
-                   (input[0] > 'z' && input[0] < 127)){
-                    mChar = input[0];
+                   (input[0] > 'z' && input[0] < 127)){ //if the input character is printable but not alphabetic
+                    mChar = input[0]; //set masking character
                 }
-                else{
+                else{ //Otherwise output error message
                     cout << "> INVALID INPUT" << endl;
                 }
             } while((input[0] < ' ' && input[0] > 'A') || 
@@ -189,15 +224,14 @@ void options(unsigned char &diff, unsigned char &mChar){
             cout << "CURRENT MASK CHARACTER: " << mChar << endl;
             break;
         }
-        case 'H':
+        case 'H': //Output help information
         {
             displayfile("help.dat");
             break;
         }
     }
 }
-//111111222222222233333333334444444444555555555566666666667777777777888888888889
-//345678901234567890123456789012345678901234567890123456789012345678901234567890
+
 /******************************************************************************/
 /*******************************Save Scores************************************/
 /******************************************************************************/
@@ -305,35 +339,53 @@ int countlines(const char path[]){
     return counter;
 }
 
+/******************************************************************************/
+/************************************Mask**************************************/
+/******************************************************************************/
+//  Puts a string on equal length to an input string into a new array
+//  Fills the new string with the given character
+//Inputs
+//  length : the length of the input string
+//  word : the input string
+//  mWord : the return string
+//  mChar : The masking character
 void mask(int length, const char word[], char mWord[], char mChar){
-    for(int i = 0; i < length; ++i){
-        if(word[i] != '\0'){
-        mWord[i] = mChar;
+    for(int i = 0; i < length; ++i){ //loop through the words
+        if(word[i] != '\0'){ //if the character is not null
+            mWord[i] = mChar; //set to a masking character
         }
     }
 }
 
-void getword(unsigned char diff, char buffer[], int& length){
-    const unsigned char E_LNGTH = 7,
-                        M_LNGTH = 12,
-                        H_LNGTH = 14;
-    const char E_LIST[] = "wdleasy.txt",
-               M_LIST[] = "wdlmedium.txt",
-               H_LIST[] = "wdlhard.txt";
-    int lnCount;
-    ifstream iFile;
+/******************************************************************************/
+/*********************************Get Word*************************************/
+/******************************************************************************/
+//  Gets a word from the word lists 
+//Inputs
+//  diff : The current game difficulty
+//  buffer : the array to return the word in
+// &length : the length of the word to be returned
+void getword(unsigned char diff, char buffer[], int &length){
+    const unsigned char E_LNGTH = 7, //Easy word length
+                        M_LNGTH = 12, //Medium word length
+                        H_LNGTH = 14; //Hard word length
+    const char E_LIST[] = "wdleasy.txt", //Easy word file path
+               M_LIST[] = "wdlmedium.txt", //Medium word file path
+               H_LIST[] = "wdlhard.txt"; //Hard word file path
+    int lnCount; //The line count
+    ifstream iFile; //input file stream
     
-    if (diff == 1){
-        iFile.open(E_LIST);
-        lnCount = countlines(E_LIST);
-        int target = rand() % lnCount;
-        for(int i = 0; i < target; ++i){
+    if (diff == 1){ //If Easy
+        iFile.open(E_LIST); //Open file
+        lnCount = countlines(E_LIST); //count file lines
+        int target = rand() % lnCount; //pick a random line from the file
+        for(int i = 0; i < target; ++i){ //read to that line
             iFile >> buffer;
         }
-        iFile.close();
-        length = E_LNGTH;
+        iFile.close(); //close file
+        length = E_LNGTH; //set length
     }
-    else if (diff == 2){
+    else if (diff == 2){ //If Medium
         iFile.open(M_LIST);
         lnCount = countlines(M_LIST);
         int target = rand() % lnCount;
@@ -343,7 +395,7 @@ void getword(unsigned char diff, char buffer[], int& length){
         iFile.close();
         length = M_LNGTH;
     }
-    else{
+    else{ //If Hard
         iFile.open(H_LIST);
         lnCount = countlines(H_LIST);
         int target = rand() % lnCount;
@@ -355,62 +407,86 @@ void getword(unsigned char diff, char buffer[], int& length){
     }
 }
 
+/******************************************************************************/
+/*********************************Play Game***********************************/
+/******************************************************************************/
+//  Main game processing function. Handle one game of hangman and then return
+//Inputs
+//  diff : the current difficulty
+//  mChar : the current masking character
+//Outputs
+//  true if you win
+//  false if you lose
 bool playgame(unsigned char diff, unsigned char mChar){
-    const unsigned char GMAX = 24,
-                        WDLNGTH = 20,
-                        ALPHA = 28;
-    char gCount = GMAX / diff,
-         usedPos = 0,
-         guess;
-    int length;
-    char word[WDLNGTH] = {0},
-         mWord[WDLNGTH] = {0},
-         used[ALPHA] = {0};
+    const unsigned char GMAX = 24, //The maximum number of guesses
+                        WDLNGTH = 20, //word length
+                        ALPHA = 28; //alphabet length
+    char gCount = GMAX / diff, //The actual guess count
+         usedPos = 0, //The number of used characters
+         guess; //The current guess
+    int length = 0; //The length of the chosen word
+    char word[WDLNGTH] = {0}, //The actual word to guess
+         mWord[WDLNGTH] = {0}, //The masked word
+         used[ALPHA] = {0}; //The list of used characters
          
-    getword(diff, word, length);
-    mask(length, word, mWord, mChar);
+    getword(diff, word, length); //Get a word
+    mask(length, word, mWord, mChar); //Mask the word
     
-    do{
-        char input[2];
+    do{ //Turn loop
+        char input[2]; //input buffer
         cout << mWord << endl;
         cout << "REMAINING GUESSES:" << static_cast<int>(gCount) << endl;
         cout << "USED CHARACTERS: " << used << endl;
         cout << "> ";
-        cin >> input;
-        guess = tolower(input[0]);
-        if(contains(word, WDLNGTH, guess)){
-            unmask(length, word, mWord, guess);
+        //Input Data
+        cin >> input; 
+        guess = tolower(input[0]); //convert input buffer to single guess character
+        if(contains(word, WDLNGTH, guess)){ //If word contains guess
+            unmask(length, word, mWord, guess); //unmask all characters that match guess
         }
-        else{
-            --gCount;
+        else{ //If word does not contain guess
+            --gCount; //Subtract one guess
         }
-        if(!contains(used, ALPHA, guess)){
-            used[usedPos++] = guess;
-            gsort(used, ALPHA);
+        if(!contains(used, ALPHA, guess)){ //If used characters doesn't contain guess
+            used[usedPos++] = guess; //add guess to used characters and increment position
+            gsort(used, ALPHA); //Sort used characters
         }
     } while(!isequal(word, mWord, WDLNGTH) && gCount > 0);
-    cout << "ANSWER: " << word << endl;
-    if(isequal(word, mWord, WDLNGTH)){
+    //Game end processing
+    cout << "ANSWER: " << word << endl; //output the actual answer
+    if(isequal(word, mWord, WDLNGTH)){ //If the guessed word matches the actual word
         cout << "YOU WIN!" << endl;
         return true;
     }
-    else{
+    else{ //If the guessed word is incomplete
         cout << "YOU LOSE!" << endl;
         return false;
     }
 }
 
+/******************************************************************************/
+/********************************Display File**********************************/
+/******************************************************************************/
+//  Write the text from a file to standard out one line at a time
+//Inputs
+//  path : the path to the file to display
 void displayfile(const char path[]){
-    char next[256];
-    ifstream iFile;
+    char next[256]; //input buffer
+    ifstream iFile; //input file stream
 
-    iFile.open(path);
-    while (iFile.getline(next, 256, '\n')) {
-        cout << next << endl;
+    iFile.open(path); //open file
+    while (iFile.getline(next, 256, '\n')) { //read each line
+        cout << next << endl; //output line
     }
-    iFile.close();
+    iFile.close(); //close file
 }
 
+/******************************************************************************/
+/************************************Menu**************************************/
+/******************************************************************************/
+//  Main menu processing function. Returns the player's choice as a character
+//Outputs
+//  The character representing the player's choice of action
 char menu(){
     const char TITLE[] = "gametitle.txt"; //File containing game title text
     char choice; //The user's choice
@@ -438,31 +514,61 @@ char menu(){
     return choice;
 }
 
+/******************************************************************************/
+/**********************************Contains************************************/
+/******************************************************************************/
+//  A function to determine if a string contains a character
+//Inputs
+//  word : the string to compare to
+//  length : the length of the string
+//  key : the character to search for
+//Outputs
+//  true if the character is found in the string
+//  false if the character is not found in the string
 bool contains(const char word[], int length, char key){
-    for(int i = 0; i < length; ++i){
-        if(word[i] == key){ return true; }
+    for(int i = 0; i < length; ++i){ //loop through word
+        if(word[i] == key){ return true; } //if a character matches the key return true
     }
+    //Otherwise return false
     return false;
 }
 
+/******************************************************************************/
+/***********************************Is Word************************************/
+/******************************************************************************/
+//  Checks if a string only contains alphabetic characters
+//Inputs
+//  word : the string to check
+//  length : the length of the input string
+//Outputs
+//  true if the string only contains alphabetic characters
+//  false if the string contains non alphabetic characters
 bool isword(const char word[], int length){
-    for(int i = 0; i < length; ++i){
-        if(word[i] > 126 || word[i] < 33) { return false; }
+    for(int i = 0; i < length; ++i){ //loop through every character in word
+        if(word[i] > 126 || word[i] < 33) { return false; } //if word only contains alphabetic characters
     }
     return true;
 }
 
+/******************************************************************************/
+/*********************************Gnome Sort***********************************/
+/******************************************************************************/
+//  Sort a character array. Weights null characters as higher than all others
+//Inputs
+//  cArr : the character array to sort
+//  length : the length of the array to sort
 void gsort(char cArr[], int length){
     for(int pos = 1; pos < length;){ //Gnome Sort modified to handle null terminators
-        if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){
-            ++pos;
+        if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){ //if the current character is greater than the previous one or null
+            ++pos; //move one position forward
         }
-        else if (cArr[pos] <= cArr[pos - 1]){
+        else if (cArr[pos] <= cArr[pos - 1]){ //If the current character is less than or equal to the previous
+            //Swap the current character and the last
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos - 1] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
-            if(pos > 1){
-                --pos;
+            if(pos > 1){ //If the position is greater than one
+                --pos; //Move back one position
             }
         }
     }

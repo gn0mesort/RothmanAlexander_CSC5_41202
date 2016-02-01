@@ -34,54 +34,54 @@ void showscores(short, short, short, float, const char[]);
 void savescores(short, short, short, float, const char[]);
 char menu(void); //Do the basic game menu processing
 bool playgame(unsigned char, unsigned char); //Do the game processing
-void options(unsigned char&, unsigned char&);
+void options(unsigned char&, unsigned char&); //Do option menu processing
 void getword(unsigned char, char[], int&); //Get a word from the corresponding word list at random
 
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const char SCORES[] = "scores.dat",
-               CONFIG[] = "config.dat";
+    const char SCORES[] = "scores.dat", //Scores file
+               CONFIG[] = "config.dat"; //Configuration file
     const unsigned char DIFF_E = 1, //Easy Difficulty
                         DIFF_M = 2, //Medium Difficulty
                         DIFF_H = 4; //Hard Difficulty
     bool quit = false; //Determine whether or not to quit the game
     unsigned char diff = DIFF_E, //Current difficulty
-                  mChar = '_';
+                  mChar = '_'; //Masking character
     unsigned short win, //Number of wins
                    lose, //Number of losses
                    tGames; //Total number of games
-    float wlr = 0.0f;
+    float wlr = 0.0f; //Win loss ratio
     
     srand(static_cast<int>(time(0))); //Seed PRNG
-    readoptions(diff, mChar, CONFIG);
+    readoptions(diff, mChar, CONFIG); //Read options and map them to settings
     
     //Game Loop
     do{
         switch(menu()){ //Choose the input from the menu display
             case 'P': //Play the game
             {
-                playgame(diff, mChar) ? ++win : ++lose;
-                ++tGames;
-                wlr =  lose != 0 ? static_cast<float>(win) / lose 
-                                 : static_cast<float>(win) / (lose + 1);
+                playgame(diff, mChar) ? ++win : ++lose; //Play a game and increment scores
+                ++tGames; //Increment number of games
+                wlr =  lose != 0 ? static_cast<float>(win) / lose //Calculate win loss ratio 
+                                 : static_cast<float>(win) / (lose + 1); //Calculate ratio if denominator is 0
                 break;
             }
             case 'S': //Display Scores
             {
-                showscores(win, lose, tGames, wlr, SCORES);
+                showscores(win, lose, tGames, wlr, SCORES); //Display score list
                 break;
             }
             case 'O': //Display Options
             {
-                options(diff, mChar);
+                options(diff, mChar); //Display options menu
                 break;
             }
             case 'Q': //Quit
             {
-                saveoptions(diff, mChar, CONFIG);
-                savescores(win, lose, tGames, wlr, SCORES);
-                quit = true;
+                saveoptions(diff, mChar, CONFIG); //Write config data to file
+                savescores(win, lose, tGames, wlr, SCORES); //Write score data to file
+                quit = true; //Set quitting flag
             }
         }
     } while(!quit);
@@ -196,58 +196,111 @@ void options(unsigned char &diff, unsigned char &mChar){
         }
     }
 }
-
+//111111222222222233333333334444444444555555555566666666667777777777888888888889
+//345678901234567890123456789012345678901234567890123456789012345678901234567890
+/******************************************************************************/
+/*******************************Save Scores************************************/
+/******************************************************************************/
+//  Save scoring data to a file
+//Inputs
+//  win : The current number of wins
+//  lose : The current number of losses
+//  tGames : The current total number of games played
+//  wlr : The current win loss ratio
+//  path : A file path to write to
 void savescores(short win, short lose, short tGames, float wlr, 
                 const char path[]){
-    ofstream oFile;
-    time_t rawTime;
-    if(tGames > 0){
-        time(&rawTime);
+    ofstream oFile; //Output file stream
+    time_t rawTime; //The current time as a time_t object
     
-        oFile.open(path, fstream::app);
+    if(tGames > 0){ //If a game has been played
+        time(&rawTime); //Feed current time into rawTime
+    
+        oFile.open(path, fstream::app); //Open file and seek to the end
+        //Output Data to file
         oFile << ctime(&rawTime) << "SCORES: " << win << " : " << lose << endl;
         oFile << "TOTAL GAMES: " << tGames << endl;
         oFile << "RATIO: " << wlr << endl;
-        oFile.close();
+        oFile.close(); //Close output
     }
 }
 
+/******************************************************************************/
+/*******************************Show Scores************************************/
+/******************************************************************************/
+//  Display scoring data
+//Inputs
+//  win : The current number of wins
+//  lose : The current number of losses
+//  tGames : The current total number of games played
+//  wlr : The current win loss ratio
+//  path : A file path to read scores from
 void showscores(short win, short lose, short tGames, float wlr, 
                 const char path[]){
+    //Output current data
     cout << "CURRENT GAME:" << endl;
     cout << "SCORES: " << win << " : " << lose <<  endl;
     cout << "TOTAL GAMES: " << tGames << endl;
     cout << "RATIO: " << wlr << endl;
+    //Output data from file
     displayfile(path);
 }
 
+/******************************************************************************/
+/*******************************Is Equal***************************************/
+/******************************************************************************/
+//  Test whether or not two words of equal length are the same
+//Inputs
+//  word1 : the first word to compare
+//  word2 : the second word to compare
+//  length : the length of the words
+//Outputs
+//  true if all characters match
+//  false if there is a single character difference
 bool isequal(const char word1[], const char word2[], int length){
-    for(int i = 0; i < length; ++i){
-        if(word1[i] != word2[i] && word1[i] != '\0'){
+    for(int i = 0; i < length; ++i){ //loop through all characters
+        if(word1[i] != word2[i] && word1[i] != '\0'){ //compare characters unless they are null
             return false;
         }
     }
     return true;
 }
 
+/******************************************************************************/
+/*********************************Unmask***************************************/
+/******************************************************************************/
+//  Unmask a single character in a masked string based on an unmasked string
+//Inputs
+//  length : the length of the strings to use
+//  word : the unmasked string
+//  mWord : the masked string
+//  guess : the character to search for
 void unmask(int length, const char word[], char mWord[], char guess){
-    for(int i = 0; i < length; ++i){
-        if(word[i] == guess){
-            mWord[i] = guess;
+    for(int i = 0; i < length; ++i){ //loop through all characters
+        if(word[i] == guess){ //compare each character to the guess character
+            mWord[i] = guess; //Unmask the character if they match
         }
     }
 }
 
+/******************************************************************************/
+/*********************************Count Lines**********************************/
+/******************************************************************************/
+//  Count the number of lines in a file
+//Inputs
+//  path : the path to the file to count
+//Outputs
+//  counter : the number of lines counted in a file
 int countlines(const char path[]){
-    int counter = 0;
-    char temp[256];
-    ifstream ifile;
+    int counter = 0; //The line count
+    char temp[256]; //A temporary string to read into
+    ifstream ifile; //The input file stream
 
-    ifile.open(path);
-    while (ifile >> temp) {
-        ++counter;
+    ifile.open(path); //Open the file
+    while (ifile >> temp) { //read while the stream is good
+        ++counter; //increment counter
     }
-    ifile.close();
+    ifile.close(); //close file
 
     return counter;
 }

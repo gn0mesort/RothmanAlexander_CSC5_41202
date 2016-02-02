@@ -26,10 +26,10 @@ void markSrt(int[], int);
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const int SIZE = 100;
-    int arr[SIZE];
+    const int SIZE = 100; //Size of the array
+    int arr[SIZE]; //The array to sort
     
-    srand(static_cast<unsigned int>(time(0)));
+    srand(static_cast<unsigned int>(time(0))); //Seed PRNG
     
     fillAry(arr, SIZE); //Fill array
     prntAry(arr, SIZE, 10); //Print array

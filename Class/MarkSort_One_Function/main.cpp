@@ -22,13 +22,12 @@ void prntAry(int [], int, int);
 void markSrt(int[], int);
 
 //Begin Execution
-
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const int SIZE = 100;
-    int arr[SIZE];
+    const int SIZE = 100; //Size of the array
+    int arr[SIZE]; //The array to sort
 
-    srand(static_cast<unsigned int> (time(0)));
+    srand(static_cast<unsigned int> (time(0))); //Seed PRNG
 
     fillAry(arr, SIZE); //Fill array
     prntAry(arr, SIZE, 10); //Print array
@@ -47,7 +46,6 @@ int main(int argc, char** argv) {
 //  length : the length of the array
 //Output
 //  arr : the filled array
-
 void fillAry(int arr[], int length) {
     //loop and fill the array with random numbers
     for (int i = 0; i < length; ++i) {
@@ -61,7 +59,6 @@ void fillAry(int arr[], int length) {
 //Input
 //  arr : the array to print
 //  length : the length of the array
-
 void prntAry(int arr[], int length, int perLine) {
     //loop and output array
     cout << endl;
@@ -82,7 +79,6 @@ void prntAry(int arr[], int length, int perLine) {
 //  length : the length of the array
 //Output
 //  arr : the sorted array
-
 void markSrt(int arr[], int length) {
     for (int i = 0; i < length - 1; ++i) {
         //loop and compare

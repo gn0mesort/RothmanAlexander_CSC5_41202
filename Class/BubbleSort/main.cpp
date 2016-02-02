@@ -1,7 +1,7 @@
 /* 
  * File:   main.cpp
  * Author: Alexander Rothman
- * Purpose: To develop a sorting routine called MarkSort
+ * Purpose: To develop a sorting routine called BubbleSort
  * Created on February 2, 2016, 8:18 AM
  */
 
@@ -19,7 +19,7 @@ using namespace std;
 //Function Prototypes
 void fillAry(int [], int);
 void prntAry(int [], int, int);
-void markSrt(int[], int);
+void bblSrt(int[], int);
 
 //Begin Execution
 int main(int argc, char** argv) {
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
     fillAry(arr, SIZE); //Fill array
     prntAry(arr, SIZE, 10); //Print array
-    markSrt(arr, SIZE); //Test sort
+    bblSrt(arr, SIZE); //Test sort
     prntAry(arr, SIZE, 10); //Print sorted array
 
     //Exit
@@ -74,24 +74,25 @@ void prntAry(int arr[], int length, int perLine) {
 }
 
 /******************************************************************************/
-/********************************Mark Sort*************************************/
+/********************************Bubble Sort*************************************/
 /******************************************************************************/
-//  Sort an array using the MarkSort algorithm
+//  Sort an array using the BubbleSort algorithm
 //Input
 //  arr : the array to sort
 //  length : the length of the array
 //Output
 //  arr : the sorted array
-void markSrt(int arr[], int length) {
-    for (int i = 0; i < length - 1; ++i) { //loop through array
-        //loop and compare
-        for (int j = i + 1; j < length; ++j) {
-            if (arr[i] > arr[j]) {
-                //swap one value with another
-                arr[i] = arr[i] ^ arr[j];
-                arr[j] = arr[i] ^ arr[j];
-                arr[i] = arr[i] ^ arr[j];
+void bblSrt(int arr[], int length) {
+    bool swap;
+    do{
+        swap = false;
+        for(int j = 0; j < length - 1; ++j){
+            if(arr[j] > arr[j + 1]){
+                arr[j] = arr[j] ^ arr[j + 1];
+                arr[j + 1] = arr[j] ^ arr[j + 1];
+                arr[j] = arr[j] ^ arr[j + 1];
+                swap = true;
             }
         }
-    }
+    } while(swap);
 }

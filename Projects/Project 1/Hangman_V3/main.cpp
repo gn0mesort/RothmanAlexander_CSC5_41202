@@ -19,23 +19,39 @@ using namespace std;
 //Global Constants
 
 //Function Prototypes
-void gsort(char[], int);
-bool isword(const char[], int); 
-bool contains(const char[], int, char); 
-void displayfile(const char[]);
-int countlines(const char[]); 
+//Gnome Sort
+void gSort(char[], int);
+//Is Word
+bool isWord(const char[], int);
+//Contains
+bool cntns(const char[], int, char);
+//Display File
+void dspFile(const char[]);
+//Count Lines
+int cntLine(const char[]); 
+//Mask
 void mask(int, const char[], char[], char); 
+//Unmask
 void unmask(int, const char[], char[], char); 
-bool isequal(const char[], const char[], int);
+//Is Equal
+bool isEqual(const char[], const char[], int);
 //Game Functions
-void readoptions(unsigned char&, unsigned char&, const char[]);
-void saveoptions(unsigned char, unsigned char, const char[]);
-void showscores(short, short, short, float, const char[]);
-void savescores(short, short, short, float, const char[]);
+//Read Options
+void rdOpt(unsigned char&, unsigned char&, const char[]);
+//Save Options
+void svOpt(unsigned char, unsigned char, const char[]);
+//Show Scores
+void shwScr(short, short, short, float, const char[]);
+//Save Scores
+void svScr(short, short, short, float, const char[]);
+//Menu
 char menu(void);
-bool playgame(unsigned char, unsigned char); 
+//Play Game
+bool plyGame(unsigned char, unsigned char); 
+//Options
 void options(unsigned char&, unsigned char&); 
-void getword(unsigned char, char[], int&);
+//Get Word
+void getWord(unsigned char, char[], int&);
 
 //Begin Execution
 int main(int argc, char** argv) {
@@ -48,20 +64,20 @@ int main(int argc, char** argv) {
     bool quit = false; //Determine whether or not to quit the game
     unsigned char diff = DIFF_E, //Current difficulty
                   mChar = '_'; //Masking character
-    unsigned short win, //Number of wins
-                   lose, //Number of losses
-                   tGames; //Total number of games
+    unsigned short win = 0, //Number of wins
+                   lose = 0, //Number of losses
+                   tGames = 0; //Total number of games
     float wlr = 0.0f; //Win loss ratio
     
     srand(static_cast<int>(time(0))); //Seed PRNG
-    readoptions(diff, mChar, CONFIG); //Read options and map them to settings
+    rdOpt(diff, mChar, CONFIG); //Read options and map them to settings
     
     //Game Loop
     do{
         switch(menu()){ //Choose the input from the menu display
             case 'P': //Play the game
             {
-                playgame(diff, mChar) ? ++win : ++lose; //Play a game and increment scores
+                plyGame(diff, mChar) ? ++win : ++lose; //Play a game and increment scores
                 ++tGames; //Increment number of games
                 wlr =  lose != 0 ? static_cast<float>(win) / lose //Calculate win loss ratio 
                                  : static_cast<float>(win) / (lose + 1); //Calculate ratio if denominator is 0
@@ -69,7 +85,7 @@ int main(int argc, char** argv) {
             }
             case 'S': //Display Scores
             {
-                showscores(win, lose, tGames, wlr, SCORES); //Display score list
+                shwScr(win, lose, tGames, wlr, SCORES); //Display score list
                 break;
             }
             case 'O': //Display Options
@@ -79,8 +95,8 @@ int main(int argc, char** argv) {
             }
             case 'Q': //Quit
             {
-                saveoptions(diff, mChar, CONFIG); //Write config data to file
-                savescores(win, lose, tGames, wlr, SCORES); //Write score data to file
+                svOpt(diff, mChar, CONFIG); //Write config data to file
+                svScr(win, lose, tGames, wlr, SCORES); //Write score data to file
                 quit = true; //Set quitting flag
             }
         }
@@ -98,7 +114,7 @@ int main(int argc, char** argv) {
 //  &diff : The current difficulty setting
 //  &mChar : The current masking character
 //  path : The location of the file you're reading from
-void readoptions(unsigned char &diff, unsigned char &mChar, const char path[]){
+void rdOpt(unsigned char &diff, unsigned char &mChar, const char path[]){
     char input[3] = {0}; //input array for file reading
     ifstream iFile; //input file stream
     
@@ -118,7 +134,7 @@ void readoptions(unsigned char &diff, unsigned char &mChar, const char path[]){
 //  diff : The current difficulty setting
 //  mChar : The current masking character
 //  path : The location of the file you're writing to
-void saveoptions(unsigned char diff, unsigned char mChar, const char path[]){
+void svOpt(unsigned char diff, unsigned char mChar, const char path[]){
     ofstream oFile; //Output file stream
     
     oFile.open(path); //open file
@@ -226,7 +242,7 @@ void options(unsigned char &diff, unsigned char &mChar){
         }
         case 'H': //Output help information
         {
-            displayfile("help.dat");
+            dspFile("help.dat");
             break;
         }
     }
@@ -242,7 +258,7 @@ void options(unsigned char &diff, unsigned char &mChar){
 //  tGames : The current total number of games played
 //  wlr : The current win loss ratio
 //  path : A file path to write to
-void savescores(short win, short lose, short tGames, float wlr, 
+void svScr(short win, short lose, short tGames, float wlr, 
                 const char path[]){
     ofstream oFile; //Output file stream
     time_t rawTime; //The current time as a time_t object
@@ -269,15 +285,16 @@ void savescores(short win, short lose, short tGames, float wlr,
 //  tGames : The current total number of games played
 //  wlr : The current win loss ratio
 //  path : A file path to read scores from
-void showscores(short win, short lose, short tGames, float wlr, 
+void shwScr(short win, short lose, short tGames, float wlr, 
                 const char path[]){
     //Output current data
     cout << "CURRENT GAME:" << endl;
     cout << "SCORES: " << win << " : " << lose <<  endl;
     cout << "TOTAL GAMES: " << tGames << endl;
+    cout << fixed << setprecision(2) << showpoint;
     cout << "RATIO: " << wlr << endl;
     //Output data from file
-    displayfile(path);
+    dspFile(path);
 }
 
 /******************************************************************************/
@@ -291,7 +308,7 @@ void showscores(short win, short lose, short tGames, float wlr,
 //Outputs
 //  true if all characters match
 //  false if there is a single character difference
-bool isequal(const char word1[], const char word2[], int length){
+bool isEqual(const char word1[], const char word2[], int length){
     for(int i = 0; i < length; ++i){ //loop through all characters
         if(word1[i] != word2[i] && word1[i] != '\0'){ //compare characters unless they are null
             return false;
@@ -325,7 +342,7 @@ void unmask(int length, const char word[], char mWord[], char guess){
 //  path : the path to the file to count
 //Outputs
 //  counter : the number of lines counted in a file
-int countlines(const char path[]){
+int cntLine(const char path[]){
     int counter = 0; //The line count
     char temp[256]; //A temporary string to read into
     ifstream ifile; //The input file stream
@@ -365,7 +382,7 @@ void mask(int length, const char word[], char mWord[], char mChar){
 //  diff : The current game difficulty
 //  buffer : the array to return the word in
 // &length : the length of the word to be returned
-void getword(unsigned char diff, char buffer[], int &length){
+void getWord(unsigned char diff, char buffer[], int &length){
     const unsigned char E_LNGTH = 7, //Easy word length
                         M_LNGTH = 12, //Medium word length
                         H_LNGTH = 14; //Hard word length
@@ -377,7 +394,7 @@ void getword(unsigned char diff, char buffer[], int &length){
     
     if (diff == 1){ //If Easy
         iFile.open(E_LIST); //Open file
-        lnCount = countlines(E_LIST); //count file lines
+        lnCount = cntLine(E_LIST); //count file lines
         int target = rand() % lnCount; //pick a random line from the file
         for(int i = 0; i < target; ++i){ //read to that line
             iFile >> buffer;
@@ -387,7 +404,7 @@ void getword(unsigned char diff, char buffer[], int &length){
     }
     else if (diff == 2){ //If Medium
         iFile.open(M_LIST);
-        lnCount = countlines(M_LIST);
+        lnCount = cntLine(M_LIST);
         int target = rand() % lnCount;
         for(int i = 0; i < target; ++i){
             iFile >> buffer;
@@ -397,7 +414,7 @@ void getword(unsigned char diff, char buffer[], int &length){
     }
     else{ //If Hard
         iFile.open(H_LIST);
-        lnCount = countlines(H_LIST);
+        lnCount = cntLine(H_LIST);
         int target = rand() % lnCount;
         for(int i = 0; i < target; ++i){
             iFile >> buffer;
@@ -417,7 +434,7 @@ void getword(unsigned char diff, char buffer[], int &length){
 //Outputs
 //  true if you win
 //  false if you lose
-bool playgame(unsigned char diff, unsigned char mChar){
+bool plyGame(unsigned char diff, unsigned char mChar){
     const unsigned char GMAX = 24, //The maximum number of guesses
                         WDLNGTH = 20, //word length
                         ALPHA = 28; //alphabet length
@@ -429,7 +446,7 @@ bool playgame(unsigned char diff, unsigned char mChar){
          mWord[WDLNGTH] = {0}, //The masked word
          used[ALPHA] = {0}; //The list of used characters
          
-    getword(diff, word, length); //Get a word
+    getWord(diff, word, length); //Get a word
     mask(length, word, mWord, mChar); //Mask the word
     
     do{ //Turn loop
@@ -441,20 +458,20 @@ bool playgame(unsigned char diff, unsigned char mChar){
         //Input Data
         cin >> input; 
         guess = tolower(input[0]); //convert input buffer to single guess character
-        if(contains(word, WDLNGTH, guess)){ //If word contains guess
+        if(cntns(word, WDLNGTH, guess)){ //If word contains guess
             unmask(length, word, mWord, guess); //unmask all characters that match guess
         }
         else{ //If word does not contain guess
             --gCount; //Subtract one guess
         }
-        if(!contains(used, ALPHA, guess)){ //If used characters doesn't contain guess
+        if(!cntns(used, ALPHA, guess)){ //If used characters doesn't contain guess
             used[usedPos++] = guess; //add guess to used characters and increment position
-            gsort(used, ALPHA); //Sort used characters
+            gSort(used, ALPHA); //Sort used characters
         }
-    } while(!isequal(word, mWord, WDLNGTH) && gCount > 0);
+    } while(!isEqual(word, mWord, WDLNGTH) && gCount > 0);
     //Game end processing
     cout << "ANSWER: " << word << endl; //output the actual answer
-    if(isequal(word, mWord, WDLNGTH)){ //If the guessed word matches the actual word
+    if(isEqual(word, mWord, WDLNGTH)){ //If the guessed word matches the actual word
         cout << "YOU WIN!" << endl;
         return true;
     }
@@ -470,7 +487,7 @@ bool playgame(unsigned char diff, unsigned char mChar){
 //  Write the text from a file to standard out one line at a time
 //Inputs
 //  path : the path to the file to display
-void displayfile(const char path[]){
+void dspFile(const char path[]){
     char next[256]; //input buffer
     ifstream iFile; //input file stream
 
@@ -492,7 +509,7 @@ char menu(){
     char choice; //The user's choice
     char input[8] = {0}; //The string input by the user to cut the choice from
     
-    displayfile(TITLE); //Display the title file
+    dspFile(TITLE); //Display the title file
     //Display the game menu
     cout << "Menu:" << setw(15) << "(P)lay" << setw(15) << "(S)cores" 
          << setw(15) << "(O)ptions" << setw(10) << "(Q)uit" << endl;
@@ -525,7 +542,7 @@ char menu(){
 //Outputs
 //  true if the character is found in the string
 //  false if the character is not found in the string
-bool contains(const char word[], int length, char key){
+bool cntns(const char word[], int length, char key){
     for(int i = 0; i < length; ++i){ //loop through word
         if(word[i] == key){ return true; } //if a character matches the key return true
     }
@@ -543,7 +560,7 @@ bool contains(const char word[], int length, char key){
 //Outputs
 //  true if the string only contains alphabetic characters
 //  false if the string contains non alphabetic characters
-bool isword(const char word[], int length){
+bool isWord(const char word[], int length){
     for(int i = 0; i < length; ++i){ //loop through every character in word
         if(word[i] > 126 || word[i] < 33) { return false; } //if word only contains alphabetic characters
     }
@@ -557,7 +574,7 @@ bool isword(const char word[], int length){
 //Inputs
 //  cArr : the character array to sort
 //  length : the length of the array to sort
-void gsort(char cArr[], int length){
+void gSort(char cArr[], int length){
     for(int pos = 1; pos < length;){ //Gnome Sort modified to handle null terminators
         if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){ //if the current character is greater than the previous one or null
             ++pos; //move one position forward

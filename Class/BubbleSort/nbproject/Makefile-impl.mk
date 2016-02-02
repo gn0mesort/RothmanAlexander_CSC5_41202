@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Hangman_V3
+PROJECTNAME=BubbleSort
 
 # Active Configuration
 DEFAULTCONF=Debug

@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=MarkSort_One_Function
+PROJECTNAME=MarkSort_V2
 
 # Active Configuration
 DEFAULTCONF=Debug

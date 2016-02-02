@@ -41,6 +41,7 @@ int main(int argc, char** argv) {
 /******************************************************************************/
 /*******************************Fill Array*************************************/
 /******************************************************************************/
+//  Fill an array with random integer values for later sorting
 //Input
 //  arr : the array to fill
 //  length : the length of the array
@@ -56,6 +57,7 @@ void fillAry(int arr[], int length) {
 /******************************************************************************/
 /******************************Print Array*************************************/
 /******************************************************************************/
+//  Print an array
 //Input
 //  arr : the array to print
 //  length : the length of the array
@@ -74,6 +76,7 @@ void prntAry(int arr[], int length, int perLine) {
 /******************************************************************************/
 /********************************Mark Sort*************************************/
 /******************************************************************************/
+//  Sort an array using the MarkSort algorithm
 //Input
 //  arr : the array to sort
 //  length : the length of the array

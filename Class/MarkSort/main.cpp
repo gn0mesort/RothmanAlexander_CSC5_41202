@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
 /******************************************************************************/
 /*******************************Fill Array*************************************/
 /******************************************************************************/
+//  Fill an array with random integer values for later sorting
 //Input
 //  arr : the array to fill
 //  length : the length of the array
@@ -58,6 +59,7 @@ void fillAry(int arr[], int length){
 /******************************************************************************/
 /******************************Print Array*************************************/
 /******************************************************************************/
+//  Print an array
 //Input
 //  arr : the array to print
 //  length : the length of the array
@@ -76,6 +78,7 @@ void prntAry(int arr[], int length, int perLine){
 /******************************************************************************/
 /******************************Smallest in List********************************/
 /******************************************************************************/
+//  Find the smallest value in a list to some position
 //Input
 //  arr : the array to use
 //  length : the length of the array
@@ -92,6 +95,7 @@ void lstSmal(int arr[] , int length, int pos){
 /******************************************************************************/
 /***********************************Swap***************************************/
 /******************************************************************************/
+//  Swap to integer values
 //Input
 //  val1 : the first value
 //  val2 : the second value
@@ -108,6 +112,7 @@ void swap(int &val1, int &val2){
 /******************************************************************************/
 /********************************Mark Sort*************************************/
 /******************************************************************************/
+//  Sort an array using the MarkSort algorithm
 //Input
 //  arr : the array to sort
 //  length : the length of the array

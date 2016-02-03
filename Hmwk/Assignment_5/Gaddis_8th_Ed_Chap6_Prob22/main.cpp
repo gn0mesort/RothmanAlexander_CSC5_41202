@@ -45,7 +45,10 @@ int main(int argc, char** argv) {
 // false if the number can be divided evenly by something other than one or itself
 bool isPrime(int chkNum){
     for(int i = 2; i < chkNum; ++i){ //loop through all numbers between 1 or chkNum exclusively
-        if(chkNum % i == 0) { return false; } //if divisible return false
+        if(chkNum % i == 0) { //if divisible return false
+            cout << chkNum << " is divisible by " << i << endl;
+            return false; 
+        } 
     }
     
     //Otherwise return true

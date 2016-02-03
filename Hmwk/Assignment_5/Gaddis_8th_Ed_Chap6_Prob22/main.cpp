@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 //  chkNum : the number to check the primacy of
 //Output
 // true if the number cannot be divided evenly by anything other than one or itself
-// false if the number can be divided evenely by something other than one or itself
+// false if the number can be divided evenly by something other than one or itself
 bool isPrime(int chkNum){
     for(int i = 2; i < chkNum; ++i){ //loop through all numbers between 1 or chkNum exclusively
         if(chkNum % i == 0) { return false; } //if divisible return false

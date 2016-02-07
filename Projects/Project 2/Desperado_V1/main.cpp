@@ -9,12 +9,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <string>
 
 using namespace std;
 void frmtOpt(string);
 void gChoice(char[], string[], int);
 char gInput(void);
 void pause(void);
+void dspFile(string);
 //Game Functions
 void svGame(string);
 void ldGame(string);
@@ -23,11 +26,17 @@ void plyGame(void);
 void options(void);
 
 int main(int argc, char** argv) {
+    //Player Data
+    string pName = "No Name";
+    unsigned char level = 1;
+    unsigned char inv[]
+    //End Player Data
     bool quit = false;
     const int MAIN_MENU_SIZE = 3;
     string mMenu[] = {"Play", "Options", "Quit"}; 
 
     do {
+        dspFile("header.txt");
         switch (shwMenu(mMenu, MAIN_MENU_SIZE)) {
             case 'P':
             {
@@ -87,7 +96,7 @@ char shwMenu(string opts[], int length) {
     char choices[length] = {0};
     gChoice(choices, opts, length);
     for (int i = 0; i < length; ++i) {
-        cout << setw(10) << fmrtOpt(opts[i]);
+        cout << setw(opts[i].length() + 5) << fmrtOpt(opts[i]);
     }
     cout << endl;
     do {
@@ -118,3 +127,19 @@ void plyGame() {
     }
 }
 
+/******************************************************************************/
+/********************************Display File**********************************/
+/******************************************************************************/
+//  Write the text from a file to standard out one line at a time
+//Inputs
+//  path : the path to the file to display
+void dspFile(string path){
+    string next; //input buffer
+    ifstream iFile; //input file stream
+
+    iFile.open(path.c_str()); //open file
+    while (getline(iFile, next)) { //read each line
+        cout << next << endl; //output line
+    }
+    iFile.close(); //close file
+}

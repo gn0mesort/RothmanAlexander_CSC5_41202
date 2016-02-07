@@ -20,27 +20,20 @@ int fndHigh(const float[], int);
 int fndLow(const float[], int);
 float sum(const float[], int);
 float avg(float, int);
-void gSort(float[], int[], int);
 
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
     const unsigned char NMONTHS = 12; //The number of months
     float total; //The total rainfall in inches
-    int index[NMONTHS]; //The indexing array
     float months[NMONTHS]; //The array of months
-    
-
-    for(int i = 0; i < NMONTHS; ++i){ //Fill Indexing array
-        index[i] = i;
-    }
     
     //Input Data
     for (int i = 0; i < NMONTHS; ++i) { //Loop through each month
         do { //Input Validation
             cout << "ENTER RAINFAIL FOR " << month(i + 1) << " IN INCHES: ";
-            cin >> months[index[i]];
-        } while (months[index[i]] < 0.0f);
+            cin >> months[i];
+        } while (months[i] < 0.0f);
     }
     //Calculate and Output Results
     total = sum(months, NMONTHS); //Calculate total rainfall
@@ -54,14 +47,6 @@ int main(int argc, char** argv) {
     cout << "TOTAL RAINFALL:   " << total << endl;
     //Output average rainfall
     cout << "AVERAGE RAINFALL: " << avg(total, NMONTHS) << endl;
-
-    //Sort months by rainfall
-    gSort(months, index, NMONTHS);
-    //Output sorted months
-    cout << "MONTHS SORTED BY AVERAGE RAINFALL:" << endl;
-    for(int i = 0; i < NMONTHS; ++i){
-        cout << month(index[i] + 1) << endl;
-    }
     
     //Exit
     return 0;
@@ -219,29 +204,4 @@ float sum(const float arr[], int length){
     }
     
     return sum;
-}
-
-/******************************************************************************/
-/*********************************Gnome Sort***********************************/
-/******************************************************************************/
-//  Sort an integer array.
-//Inputs
-//  arr : the array to sort
-//  index : the indexing array
-//  length : the length of the array to sort
-void gSort(float arr[], int index[], int length){
-    for(int pos = 1; pos < length;){ 
-        if(arr[index[pos]] >= arr[index[pos - 1]]){
-            ++pos; //move one position forward
-        }
-        else if (arr[index[pos]] <= arr[index[pos - 1]]){ //If the current character is less than or equal to the previous
-            //Swap the current character and the last
-            index[pos] = index[pos] ^ index[pos - 1];
-            index[pos - 1] = index[pos] ^ index[pos - 1];
-            index[pos] = index[pos] ^ index[pos - 1];
-            if(pos > 1){ //If the position is greater than one
-                --pos; //Move back one position
-            }
-        }
-    }
 }

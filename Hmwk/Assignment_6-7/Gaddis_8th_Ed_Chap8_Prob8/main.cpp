@@ -5,29 +5,40 @@
  * Created on February 6, 2016, 9:11 AM
  */
 
+//System Libraries
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 
 using namespace std;
 
+//User Libraries
+
+//Global Constants
+
+//Function Prototypes
 void bblSrt(int[], int);
 int linSrch(const int[], int, int, unsigned int&);
 int binSrch(const int[], int, int, unsigned int&);
 
+//Begin Execution
 int main(int argc, char** argv) {
-    const unsigned int SIZE = 20;
-    unsigned int count = 0,
-                 key;
-    int arr[SIZE];
+    //Declaration and Initialization
+    const unsigned int SIZE = 20; //The size of the array to search
+    unsigned int count = 0, //The number of comparisons made by a search
+                 key; //The key to search for
+    int arr[SIZE]; //The array to search
     
-    srand(static_cast<int>(time(0)));
+    srand(static_cast<int>(time(0))); //Seed PRNG
     
-    for(int i = 0; i < SIZE; ++i){
+    for(int i = 0; i < SIZE; ++i){ //Generate array values
         arr[i] = rand() % 100000;
     }
     
-    key = arr[rand() % SIZE];
+    key = arr[rand() % SIZE]; //Pick a key from within the array
+    
+    //Calculate and Output Results
+    //Linear Search
     cout << "SEARCHING FOR: " << key << endl;
     cout << "LINEAR SEARCH FOUND " << key << " AT " 
          << linSrch(arr, SIZE, key, count);
@@ -35,8 +46,9 @@ int main(int argc, char** argv) {
     //At least on my computer
     cout << " IN " << count 
          << " COMPARISONS" << endl;
-    count = 0;
-    bblSrt(arr, SIZE);
+    count = 0; //Reset count
+    //Binary Search
+    bblSrt(arr, SIZE); //Sort array
     cout << "BINARY SEARCH FOUND " << key << " AT " 
          << binSrch(arr, SIZE, key, count); 
     cout << " IN " << count 
@@ -44,12 +56,22 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+/******************************************************************************/
+/********************************Linear Search*********************************/
+/******************************************************************************/
+//  Search an array for a key value using linear search
+//Input
+//  arr : the array to search
+//  length : the length of the array
+//  key : the key to search for
+//  count : the number of comparisons made
+//Output
+//  The index of the key value or -1 if not found
+//  count : the number of comparisons made
 int linSrch(const int arr[], int length, int key, unsigned int &count){
-    unsigned int c = 0;
-    for(int i = 0; i < length; ++i){
-        ++c;
-        if (arr[i] == key){
-            count = c;
+    for(int i = 0; i < length; ++i){ //Loop through each element
+        count += 1;
+        if (arr[i] == key){ //compare each element to the key
             return i;
         }
     }
@@ -66,8 +88,10 @@ int linSrch(const int arr[], int length, int key, unsigned int &count){
 //  arr : the array to search
 //  length : the length of the array
 //  key : the key to search for
+//  count : the number of comparisons made
 //Output
 //  The index of the key value or -1 if not found
+//  count : the number of comparisons made
 int binSrch(const int arr[], int length, int key, unsigned int &count){
     int first = 0, //The low end of our guessing range
         last = length - 1, //The high end of our guessing range

@@ -5,10 +5,16 @@
  * Created on February 5, 2016, 9:05 PM
  */
 
+//System Libraries
 #include <iostream>
 
 using namespace std;
 
+//User Libraries
+
+//Global Constants
+
+//Function Prototypes
 string month(int);
 int fndHigh(const float[], int);
 int fndLow(const float[], int);
@@ -16,39 +22,59 @@ float sum(const float[], int);
 float avg(float, int);
 void gSort(float[], int[], int);
 
+//Begin Execution
 int main(int argc, char** argv) {
-    const unsigned char NMONTHS = 12;
-    float total;
-    int index[NMONTHS];
-    float months[NMONTHS];
+    //Declaration and Initialization
+    const unsigned char NMONTHS = 12; //The number of months
+    float total; //The total rainfall in inches
+    int index[NMONTHS]; //The indexing array
+    float months[NMONTHS]; //The array of months
     
 
-    for(int i = 0; i < NMONTHS; ++i){
+    for(int i = 0; i < NMONTHS; ++i){ //Fill Indexing array
         index[i] = i;
     }
-    for (int i = 0; i < NMONTHS; ++i) {
-        do {
+    
+    //Input Data
+    for (int i = 0; i < NMONTHS; ++i) { //Loop through each month
+        do { //Input Validation
             cout << "ENTER RAINFAIL FOR " << month(i + 1) << " IN INCHES: ";
             cin >> months[index[i]];
         } while (months[index[i]] < 0.0f);
     }
-    total = sum(months, NMONTHS);
+    //Calculate and Output Results
+    total = sum(months, NMONTHS); //Calculate total rainfall
+    //Output highest month
     cout << "THE LEAST RAIN FELL IN " << month(fndLow(months, NMONTHS) + 1) 
          << endl;
+    //Output lowest month
     cout << "THE MOST RAIN FELL IN " << month(fndHigh(months, NMONTHS) + 1) 
          << endl;
+    //Output total rainfall
     cout << "TOTAL RAINFALL:   " << total << endl;
+    //Output average rainfall
     cout << "AVERAGE RAINFALL: " << avg(total, NMONTHS) << endl;
 
+    //Sort months by rainfall
     gSort(months, index, NMONTHS);
+    //Output sorted months
     cout << "MONTHS SORTED BY AVERAGE RAINFALL:" << endl;
     for(int i = 0; i < NMONTHS; ++i){
         cout << month(index[i] + 1) << endl;
     }
     
+    //Exit
     return 0;
 }
 
+/******************************************************************************/
+/************************************Month*************************************/
+/******************************************************************************/
+//  Convert an integer to a month name
+//Inputs
+//  num : the number of the month
+//Outputs
+//  A string containing the matching month name
 string month(int num) {
     string r;
     switch (num) {
@@ -117,6 +143,15 @@ string month(int num) {
     return r;
 }
 
+/******************************************************************************/
+/*********************************Find Highest*********************************/
+/******************************************************************************/
+//  Finds the highest value in an array
+//Inputs
+//  arr : the array to search
+//  length : the length of the array to search
+//Output
+//  The highest value in the array
 int fndHigh(const float arr[], int length){
     int highPos = 0;
     float highest = 0;
@@ -131,6 +166,15 @@ int fndHigh(const float arr[], int length){
     return highPos;
 }
 
+/******************************************************************************/
+/*********************************Find Lowest**********************************/
+/******************************************************************************/
+//  Finds the lowest value in an array
+//Inputs
+//  arr : the array to search
+//  length : the length of the array to search
+//Output
+//  The lowest value in the array
 int fndLow(const float arr[], int length){
     int lowPos = 0;
     float lowest = arr[0];
@@ -145,10 +189,28 @@ int fndLow(const float arr[], int length){
     return lowPos;
 }
 
+/******************************************************************************/
+/************************************Average***********************************/
+/******************************************************************************/
+//  Calculates an average
+//Inputs
+//  sum : the sum of the values to be averaged
+//  count : the number of values to be averaged
+//Output
+//  The average of the set
 float avg(float sum, int count){
     return sum / count;
 }
 
+/******************************************************************************/
+/*************************************Sum**************************************/
+/******************************************************************************/
+//  Sums an array
+//Inputs
+//  arr : the array to sum
+//  length : the length of the array to sum
+//Output
+//  The sum of the values in the array
 float sum(const float arr[], int length){
     float sum = 0;
     
@@ -165,6 +227,7 @@ float sum(const float arr[], int length){
 //  Sort an integer array.
 //Inputs
 //  arr : the array to sort
+//  index : the indexing array
 //  length : the length of the array to sort
 void gSort(float arr[], int index[], int length){
     for(int pos = 1; pos < length;){ 

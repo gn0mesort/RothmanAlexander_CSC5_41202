@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Desperado_V1
+PROJECTNAME=Database_MarkSort_V2
 
 # Active Configuration
 DEFAULTCONF=Debug

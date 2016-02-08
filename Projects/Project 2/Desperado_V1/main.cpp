@@ -7,47 +7,67 @@
 
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <vector>
 
 const int ISIZEY = 12;
 const int ISIZEX = 2;
 
 using namespace std;
 void frmtOpt(string);
-void gChoice(char[], string[], int);
+void gChoice(char[], const string[], int);
 char gInput(void);
+unsigned char gMaxHp(unsigned char);
 string gInStr(void);
 void pause(void);
 void dspFile(string);
+void ldGns(vector<Gun>);
 //Game Functions
 void svGame(string);
 void ldGame(string);
-char shwMenu(string[], int);
-void plyGame(string, char, unsigned char[ISIZEY][ISIZEX], bool);
+char shwMenu(const string [], int);
+void plyGame(void);
+void battle(Player &, Player &);
 void options(void);
 
+struct Gun{
+    unsigned char atk,
+                  ammo;
+    string name,
+           dsc;
+};
+
+struct Charm{
+    unsigned char def;
+    string name,
+           dsc;
+};
+
+struct Player{
+    unsigned char hp, 
+                  level;
+    unsigned short gold;
+    string name;
+    Charm eqCharm;
+    Gun eqGun;
+};
+
 int main(int argc, char** argv) {
-    //Player Data
-    bool loaded = false;
-    unsigned char level = 1;
-    string pName = "No Name";
-    //inv[ITEM ID][0] gets the quantity of an item
-    //inv[ITEM ID][1] gets whether or not the item is equipped
-    unsigned char inv[ISIZEY][ISIZEX]; 
-    //End Player Data
-    bool quit = false;
+    bool quit = false, 
+         loaded = false;
     const int MAIN_MENU_SIZE = 3;
     string mMenu[] = {"Play", "Options", "Quit"}; 
-
+    
     do {
         dspFile("header.txt");
         switch (shwMenu(mMenu, MAIN_MENU_SIZE)) {
             case 'P':
             {
-                plyGame(pName, level, inv);
+                plyGame();
                 pause();
                 break;
             }
@@ -64,8 +84,29 @@ int main(int argc, char** argv) {
             }
         }
     } while (!quit);
-
+    
     return 0;
+}
+
+void ldGns(vector<Gun> guns){
+    Gun temp;
+    ifstream iFile;
+    
+    iFile.open("guns.dat");
+    while(iFile.good()){
+        iFile >> temp.name;
+        iFile >> temp.dsc;
+        iFile >> temp.ammo;
+        iFile >> temp.atk;
+        guns.push_back(temp);
+    }
+}
+
+unsigned char gMaxHp(unsigned char level){
+    const unsigned char BASEHP = 10;
+    const float RATE = 0.05;
+   
+    return BASEHP * (pow((1 + RATE), level));
 }
 
 char gInput() {
@@ -126,26 +167,29 @@ char shwMenu(string opts[], int length) {
     return input;
 }
 
-void plyGame(string pName, char level, unsigned char inv[ISIZEY][ISIZEX], 
-             bool loaded) {
-    const int PLAY_GAME_MENU_SIZE = 2;
+void plyGame() {
+    const int PGMS = 2;
+    vector<Gun> guns;
+    vector<Charm> charms;
+    Player pUser;
+    vector<Player> enemies;
     string pgMenu[] = {"New Game", "Load"};
     
-    switch(shwMenu(pgMenu, PLAY_GAME_MENU_SIZE)){
+    switch(shwMenu(pgMenu, PGMS)){
         case 'N':
         {
-            if(loaded){
-                //TODO Save game before overwriting
-            }
+            ldGns(guns);
+            ldChrms(charms);
+            ldEnms(enemies);
             dspFile("titlecrawl.txt");
             pause();
             cout << "Enter your name" << endl;
-            pName = gInStr();
-            level = 1;
-            for(int i = 0; i < ISIZEY; ++i){
-                inv[i][0] = 0;
-                inv[i][1] = 0;
-            }
+            pUser.name = gInStr();
+            pUser.eqGun = guns[0];
+            pUser.eqCharm = charms[0];
+            pUser.level = 1;
+            pUser.hp = gMaxHp(pUser.level);
+            pUser.gold = 0;
         }
         case 'L':
         {

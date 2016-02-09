@@ -26,7 +26,7 @@ using namespace std;
 void frmtOpt(string);
 void gChoice(char[], const string[], int);
 char gInput(void);
-unsigned char gMaxHp(unsigned char);
+unsigned short gMaxHp(unsigned char);
 string gInStr(void);
 void dspFile(string);
 void pause(void);
@@ -220,6 +220,7 @@ void ldGame(Player &user, const vector<Gun> &guns,
     string path = user.name + ".sav",
             level,
             hp;
+    short tLevel;
     int gun,
             charm;
     ifstream iFile;
@@ -227,7 +228,8 @@ void ldGame(Player &user, const vector<Gun> &guns,
     iFile >> user.name;
     iFile >> level;
     istringstream cnvLvl(level);
-    cnvLvl >> user.level;
+    cnvLvl >> tLevel;
+    user.level = tLevel;
     iFile >> hp;
     istringstream cnvHp(hp);
     cnvHp >> user.hp;
@@ -329,8 +331,8 @@ vector<Gun> ldGns() {
     return guns;
 }
 
-unsigned char gMaxHp(unsigned char level) {
-    const unsigned char BASEHP = 10;
+unsigned short gMaxHp(unsigned char level) {
+    const unsigned char BASEHP = 100;
     const float RATE = 0.05;
 
     return BASEHP * (pow((1 + RATE), level));

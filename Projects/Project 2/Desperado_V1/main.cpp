@@ -23,15 +23,13 @@ void gChoice(char[], const string[], int);
 char gInput(void);
 unsigned char gMaxHp(unsigned char);
 string gInStr(void);
-void pause(void);
 void dspFile(string);
-void ldGns(vector<Gun>);
+void pause(void);
 //Game Functions
 void svGame(string);
 void ldGame(string);
-char shwMenu(const string [], int);
+char shwMenu(string [], int);
 void plyGame(void);
-void battle(Player &, Player &);
 void options(void);
 
 struct Gun{
@@ -55,6 +53,9 @@ struct Player{
     Charm eqCharm;
     Gun eqGun;
 };
+
+void battle(Player &, Player &);
+void ldGns(vector<Gun>);
 
 int main(int argc, char** argv) {
     bool quit = false, 
@@ -94,8 +95,9 @@ void ldGns(vector<Gun> guns){
     
     iFile.open("guns.dat");
     while(iFile.good()){
-        iFile >> temp.name;
-        iFile >> temp.dsc;
+         getline(iFile, temp.name);
+         cout << temp.name << endl;
+         getline(iFile, temp.dsc);
         iFile >> temp.ammo;
         iFile >> temp.atk;
         guns.push_back(temp);
@@ -169,24 +171,25 @@ char shwMenu(string opts[], int length) {
 
 void plyGame() {
     const int PGMS = 2;
-    vector<Gun> guns;
-    vector<Charm> charms;
+    vector<Gun> guns(6);
+    vector<Charm> charms(6);
     Player pUser;
-    vector<Player> enemies;
+    vector<Player> enemies(6);
     string pgMenu[] = {"New Game", "Load"};
     
     switch(shwMenu(pgMenu, PGMS)){
         case 'N':
         {
             ldGns(guns);
-            ldChrms(charms);
-            ldEnms(enemies);
+            //ldChrms(charms);
+            //ldEnms(enemies);
             dspFile("titlecrawl.txt");
             pause();
             cout << "Enter your name" << endl;
             pUser.name = gInStr();
             pUser.eqGun = guns[0];
-            pUser.eqCharm = charms[0];
+            cout << pUser.eqGun.name << endl;
+           // pUser.eqCharm = charms[0];
             pUser.level = 1;
             pUser.hp = gMaxHp(pUser.level);
             pUser.gold = 0;

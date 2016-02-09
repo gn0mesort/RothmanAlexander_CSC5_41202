@@ -12,12 +12,13 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 using namespace std;
 
 //User Libraries
-#include "Game.h"; //Game object library
+#include "Game.h" //Game object library
 
 //Global Constants
 
@@ -29,7 +30,6 @@ unsigned char gMaxHp(unsigned char);
 string gInStr(void);
 void dspFile(string);
 void pause(void);
-unsigned char stouc(string);
 //Game Functions
 void svGame(string);
 void ldGame(string);
@@ -45,14 +45,15 @@ void svGame(const Player &);
 void pPlayer(const Player &);
 
 //Begin Execution
+
 int main(int argc, char** argv) {
-    bool quit = false, 
-         loaded = false;
+    bool quit = false,
+            loaded = false;
     const int MAIN_MENU_SIZE = 3;
-    string mMenu[] = {"Play", "Options", "Quit"}; 
-    
-    srand(static_cast<int>(time(0)));
-    
+    string mMenu[] = {"Play", "Options", "Quit"};
+
+    srand(static_cast<int> (time(0)));
+
     do {
         dspFile("header.txt");
         switch (shwMenu(mMenu, MAIN_MENU_SIZE)) {
@@ -75,61 +76,161 @@ int main(int argc, char** argv) {
             }
         }
     } while (!quit);
-    
+
     //Exit
     return 0;
 }
 
-int fndGn(const vector<Gun> &vec, const Gun &key){
-    for(int i = 0; i < vec.size(); ++i){
-        if(vec[i].name == key.name && vec[i].dsc == key.dsc 
-           && vec[i].ammo == key.ammo && vec[i].atk == key.atk){
+bool chkFile(string path){
+    ifstream file;
+    file.open(path.c_str());
+    if(file.good()){
+        file.close();
+        return true;
+    }
+    else{
+        file.close();
+        return false;
+    }
+}
+
+void shHeal(Player &user) {
+    const int MS = 2;
+    bool leave = false;
+    string menu[] = {"Yes", "No"};
+    dspFile("shamanheal.txt");
+    do {
+        cout << "Healing costs " << (gMaxHp(user.level) - user.hp) * 10 << " gold"
+                << endl;
+        cout << "Heal your wounds?" << endl;
+        switch (shwMenu(menu, MS)) {
+            case 'Y':
+            {
+                if(user.gold > (gMaxHp(user.level) - user.hp) * 10){
+                user.gold -= (gMaxHp(user.level) - user.hp) * 10;
+                user.hp = gMaxHp(user.level);
+                }
+                else{
+                    cout << "You don't have enough gold" << endl;
+                }
+                break;
+            }
+            case 'N':
+            {
+                leave = true;
+                break;
+            }
+        }
+    } while (!leave);
+}
+
+void shChrms(const vector<Charm> &charms, Player &user) {
+    char choice;
+    dspFile("shamanshop.txt");
+    cout << "INVENTORY:" << endl;
+    for (int i = 0; i < charms.size(); ++i) {
+        cout << "(" << i + 1 << ") " << charms[i].name << endl;
+        cout << '\t' << charms[i].dsc << endl;
+        cout << '\t' << "DEF:  " << static_cast<int> (charms[i].def) << endl;
+        cout << '\t' << "COST: " << charms[i].def * 100 << endl;
+    }
+    cout << "(0) Leave" << endl;
+    do {
+        cout << "What would you like to buy?" << endl;
+        choice = gInput();
+        for (int i = 0; i < charms.size(); ++i) {
+            if ((choice - 48) == i + 1) {
+                if (user.gold >= charms[i].def * 100) {
+                    user.gold -= charms[i].def * 100;
+                    user.eqCharm = charms[i];
+                } else {
+                    cout << "You don't have enough gold" << endl;
+                }
+            }
+        }
+    } while (choice != '0');
+}
+
+void shGns(const vector<Gun> &guns, Player &user) {
+    char choice;
+    dspFile("gunsmith.txt");
+    cout << "INVENTORY:" << endl;
+    for (int i = 0; i < guns.size(); ++i) {
+        cout << "(" << i + 1 << ") " << guns[i].name << endl;
+        cout << '\t' << guns[i].dsc << endl;
+        cout << '\t' << "ATK:  " << static_cast<int> (guns[i].atk) << endl;
+        cout << '\t' << "AMMO: " << guns[i].ammo << endl;
+        cout << '\t' << "COST: " << guns[i].atk * 100 << endl;
+    }
+    cout << "(0) Leave" << endl;
+    do {
+        cout << "What would you like to buy?" << endl;
+        choice = gInput();
+        for (int i = 0; i < guns.size(); ++i) {
+            if ((choice - 48) == i + 1) {
+                if (user.gold >= guns[i].atk * 100) {
+                    user.gold -= guns[i].atk * 100;
+                    user.eqGun = guns[i];
+                } else {
+                    cout << "You don't have enough gold" << endl;
+                }
+            }
+        }
+    } while (choice != '0');
+}
+
+int fndGn(const vector<Gun> &vec, const Gun &key) {
+    for (int i = 0; i < vec.size(); ++i) {
+        if (vec[i].name == key.name && vec[i].dsc == key.dsc
+                && vec[i].ammo == key.ammo && vec[i].atk == key.atk) {
             return i;
         }
     }
-    
+
     return -1;
 }
 
-int fndChrm(const vector<Charm> &vec, const Charm &key){
-    for(int i = 0; i < vec.size(); ++i){
-        if(vec[i].name == key.name && vec[i].dsc == key.dsc 
-           && vec[i].def == key.def){
+int fndChrm(const vector<Charm> &vec, const Charm &key) {
+    for (int i = 0; i < vec.size(); ++i) {
+        if (vec[i].name == key.name && vec[i].dsc == key.dsc
+                && vec[i].def == key.def) {
             return i;
         }
     }
-    
+
     return -1;
 }
 
-void svGame(const Player &user, const vector<Gun> &guns, 
-            const vector<Charm>&charms){
+void svGame(const Player &user, const vector<Gun> &guns,
+        const vector<Charm>&charms) {
     string path = user.name + ".sav";
     ofstream oFile;
     oFile.open(path.c_str());
     oFile << user.name << endl;
-    oFile << static_cast<int>(user.level) << endl;
-    oFile << static_cast<int>(user.hp) << endl;
+    oFile << static_cast<int> (user.level) << endl;
+    oFile << static_cast<int> (user.hp) << endl;
     oFile << fndGn(guns, user.eqGun) << endl;
     oFile << fndChrm(charms, user.eqCharm) << endl;
     oFile << user.gold << endl;
     oFile.close();
 }
 
-void ldGame(Player &user, const vector<Gun> &guns, 
-            const vector<Charm> &charms){
+void ldGame(Player &user, const vector<Gun> &guns,
+        const vector<Charm> &charms) {
     string path = user.name + ".sav",
             level,
             hp;
-    int gun, 
-        charm;
+    int gun,
+            charm;
     ifstream iFile;
     iFile.open(path.c_str());
     iFile >> user.name;
     iFile >> level;
-    user.level = stouc(level);
+    istringstream cnvLvl(level);
+    cnvLvl >> user.level;
     iFile >> hp;
-    user.hp = stouc(hp);
+    istringstream cnvHp(hp);
+    cnvHp >> user.hp;
     iFile >> gun;
     user.eqGun = guns[gun];
     iFile >> charm;
@@ -138,113 +239,100 @@ void ldGame(Player &user, const vector<Gun> &guns,
     iFile.close();
 }
 
-void pPlayer(const Player &p){
+void pPlayer(const Player &p) {
     cout << "NAME:  " << p.name << endl;
-    cout << "LEVEL: " << static_cast<int>(p.level) << endl;
-    cout << "HP:    " << static_cast<int>(p.hp) << "/" 
-         << static_cast<int>(gMaxHp(p.level)) << endl;
+    cout << "LEVEL: " << static_cast<int> (p.level) << endl;
+    cout << "HP:    " << static_cast<int> (p.hp) << "/"
+            << static_cast<int> (gMaxHp(p.level)) << endl;
     cout << "GUN:   " << p.eqGun.name << endl;
-    cout << "ATK:   " << static_cast<int>(p.eqGun.atk) << endl;
+    cout << "AMMO:  " << p.eqGun.cAmmo << "/" << p.eqGun.ammo << endl;
+    cout << "ATK:   " << static_cast<int> (p.eqGun.atk) << endl;
     cout << "CHARM: " << p.eqCharm.name << endl;
-    cout << "DEF:   " << static_cast<int>(p.eqCharm.def) << endl;
+    cout << "DEF:   " << static_cast<int> (p.eqCharm.def) << endl;
     cout << "GOLD:  " << p.gold << endl;
 }
 
-unsigned char stouc(string num){
-    unsigned char r = 0;
-    
-    for (int i = 0; i < num.size(); ++i){
-        r += (num.at(i) - 48) * pow(10, ((num.size() - 1) - i));
-    }
-    
-    return r;
-}
-
-//String to Unsigned Short
-//Assumes string is numeric and fits in the size of an unsigned short
-unsigned short stous(string num){
-    unsigned short r = 0; //Return value
-    
-    for(int i = 0; i < num.size(); ++i){ //Loop through each character in the string
-        r += (num.at(i) - 48) * pow(10, ((num.size() - 1) - i));
-    }
-    
-    return r;
-}
-
-vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms){
+vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms) {
     string level,
-           gold,
-           charm,
-           gun;
+            gold,
+            charm,
+            gun;
     Player temp;
     ifstream iFile;
     vector<Player> enemies;
-    
+
     iFile.open("enemies.dat");
-    while(iFile.good()){
+    while (iFile.good()) {
         getline(iFile, temp.name);
         getline(iFile, level);
         getline(iFile, gold);
         getline(iFile, charm);
         getline(iFile, gun);
         temp.hp = gMaxHp(level.at(0));
-        temp.gold = stous(gold);
+        istringstream cnvGold(gold);
+        cnvGold >> temp.gold;
         temp.eqCharm = charms[charm.at(0) - 48];
         temp.eqGun = guns[gun.at(0) - 48];
         enemies.push_back(temp);
     }
     iFile.close();
-    
+
     return enemies;
 }
 
-vector<Charm> ldChrms(){
+vector<Charm> ldChrms() {
+    short tDef;
     string def;
     Charm temp;
     ifstream iFile;
     vector<Charm> charms;
-    
+
     iFile.open("charms.dat");
-    while(iFile.good()){
+    while (iFile.good()) {
         getline(iFile, temp.name);
         getline(iFile, temp.dsc);
         getline(iFile, def);
-        temp.def = stouc(def);
+        istringstream convert(def);
+        convert >> tDef;
+        temp.def = tDef;
         charms.push_back(temp);
     }
     iFile.close();
-    
+
     return charms;
 }
 
-vector<Gun> ldGns(){
+vector<Gun> ldGns() {
     string ammo,
-           atk;
+            atk;
+    unsigned short tAtk;
     Gun temp;
     ifstream iFile;
     vector<Gun> guns;
-    
+
     iFile.open("guns.dat");
-    while(iFile.good()){
+    while (iFile.good()) {
         getline(iFile, temp.name);
         getline(iFile, temp.dsc);
         getline(iFile, ammo);
         getline(iFile, atk);
-        temp.ammo = stouc(ammo);
+        istringstream cnvAmmo(ammo);
+        cnvAmmo >> temp.ammo;
         temp.cAmmo = temp.ammo;
-        temp.atk = stouc(atk);
+        istringstream cnvAtk(atk);
+        cnvAtk >> tAtk;
+        temp.atk = tAtk;
         guns.push_back(temp);
     }
     iFile.close();
-    
+
     return guns;
 }
 
-unsigned char gMaxHp(unsigned char level){
+unsigned char gMaxHp(unsigned char level) {
     const unsigned char BASEHP = 10;
     const float RATE = 0.05;
-   
+
     return BASEHP * (pow((1 + RATE), level));
 }
 
@@ -260,7 +348,7 @@ string gInStr() {
     string input;
     cout << "> ";
     cin >> input;
-    
+
     return input;
 }
 
@@ -302,24 +390,24 @@ char shwMenu(string opts[], int length) {
             }
         }
     } while (invalid);
-    
+
     return input;
 }
 
 void plyGame() {
     const int PGMS = 2,
-              GMS = 6;
+            GMS = 6;
     bool qGame = false;
     Player pUser;
     vector<Gun> guns(ldGns());
     vector<Charm> charms(ldChrms());
     //vector<Player> enemies(ldEnms(guns, charms));
-    
+
     string pgMenu[] = {"New Game", "Load"};
-    string gMenu[] = {"Bounty Board", "Hunt Bounty", 
-                      "Gunsmith", "Shaman", "Character", "Quit"};
-    
-    switch(shwMenu(pgMenu, PGMS)){
+    string gMenu[] = {"Bounty Board", "Hunt Bounty",
+        "Gunsmith", "Shaman", "Character", "Quit"};
+
+    switch (shwMenu(pgMenu, PGMS)) {
         case 'N':
         {
             dspFile("titlecrawl.txt");
@@ -337,13 +425,26 @@ void plyGame() {
         {
             cout << "Enter the name of a character to load" << endl;
             pUser.name = gInStr();
-            ldGame(pUser, guns, charms);
-            //TODO Load game
+            if(chkFile(pUser.name + ".sav")){
+                ldGame(pUser, guns, charms);
+            }
+            else{
+                cout << "Save not found" << endl;
+                cout << "Creating new game..." << endl;
+                dspFile("titlecrawl.txt");
+                pause();
+                pUser.eqGun = guns[0];
+                pUser.eqCharm = charms[0];
+                pUser.gold = 100;
+                pUser.level = 1;
+                pUser.hp = gMaxHp(pUser.level);
+            }
             break;
         }
     }
-    do{
-        switch(shwMenu(gMenu, GMS)){
+    do {
+        dspFile("town.txt");
+        switch (shwMenu(gMenu, GMS)) {
             case 'B':
             {
                 break;
@@ -354,10 +455,28 @@ void plyGame() {
             }
             case 'G':
             {
+                shGns(guns, pUser);
+                pause();
                 break;
             }
             case 'S':
             {
+                const int SHMS = 2;
+                string shMenu[] = {"Heal", "Shop"};
+                dspFile("shaman.txt");
+                switch (shwMenu(shMenu, SHMS)) {
+                    case 'H':
+                    {
+                        shHeal(pUser);
+                        break;
+                    }
+                    case 'S':
+                    {
+                        shChrms(charms, pUser);
+                        break;
+                    }
+                }
+                pause();
                 break;
             }
             case 'C':
@@ -372,7 +491,7 @@ void plyGame() {
                 break;
             }
         }
-    } while(!qGame);
+    } while (!qGame);
     svGame(pUser, guns, charms);
 }
 
@@ -382,7 +501,8 @@ void plyGame() {
 //  Write the text from a file to standard out one line at a time
 //Inputs
 //  path : the path to the file to display
-void dspFile(string path){
+
+void dspFile(string path) {
     string next; //input buffer
     ifstream iFile; //input file stream
 

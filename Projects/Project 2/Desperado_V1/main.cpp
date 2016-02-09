@@ -17,28 +17,7 @@
 using namespace std;
 
 //User Libraries
-struct Gun{
-    unsigned char atk,
-                  ammo,
-                  cAmmo;
-    string name,
-           dsc;
-};
-
-struct Charm{
-    unsigned char def;
-    string name,
-           dsc;
-};
-
-struct Player{
-    unsigned char hp, 
-                  level;
-    unsigned short gold;
-    string name;
-    Charm eqCharm;
-    Gun eqGun;
-};
+#include "Game.h"; //Game object library
 
 //Global Constants
 
@@ -50,6 +29,7 @@ unsigned char gMaxHp(unsigned char);
 string gInStr(void);
 void dspFile(string);
 void pause(void);
+unsigned char stouc(string);
 //Game Functions
 void svGame(string);
 void ldGame(string);
@@ -61,6 +41,8 @@ void battle(Player &, Player &);
 vector<Gun> ldGns();
 vector<Charm> ldChrms();
 vector<Player> ldEnms();
+void svGame(const Player &);
+void pPlayer(const Player &);
 
 //Begin Execution
 int main(int argc, char** argv) {
@@ -98,7 +80,65 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void pPlayer(Player p){
+int fndGn(const vector<Gun> &vec, const Gun &key){
+    for(int i = 0; i < vec.size(); ++i){
+        if(vec[i].name == key.name && vec[i].dsc == key.dsc 
+           && vec[i].ammo == key.ammo && vec[i].atk == key.atk){
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+int fndChrm(const vector<Charm> &vec, const Charm &key){
+    for(int i = 0; i < vec.size(); ++i){
+        if(vec[i].name == key.name && vec[i].dsc == key.dsc 
+           && vec[i].def == key.def){
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+void svGame(const Player &user, const vector<Gun> &guns, 
+            const vector<Charm>&charms){
+    string path = user.name + ".sav";
+    ofstream oFile;
+    oFile.open(path.c_str());
+    oFile << user.name << endl;
+    oFile << static_cast<int>(user.level) << endl;
+    oFile << static_cast<int>(user.hp) << endl;
+    oFile << fndGn(guns, user.eqGun) << endl;
+    oFile << fndChrm(charms, user.eqCharm) << endl;
+    oFile << user.gold << endl;
+    oFile.close();
+}
+
+void ldGame(Player &user, const vector<Gun> &guns, 
+            const vector<Charm> &charms){
+    string path = user.name + ".sav",
+            level,
+            hp;
+    int gun, 
+        charm;
+    ifstream iFile;
+    iFile.open(path.c_str());
+    iFile >> user.name;
+    iFile >> level;
+    user.level = stouc(level);
+    iFile >> hp;
+    user.hp = stouc(hp);
+    iFile >> gun;
+    user.eqGun = guns[gun];
+    iFile >> charm;
+    user.eqCharm = charms[charm];
+    iFile >> user.gold;
+    iFile.close();
+}
+
+void pPlayer(const Player &p){
     cout << "NAME:  " << p.name << endl;
     cout << "LEVEL: " << static_cast<int>(p.level) << endl;
     cout << "HP:    " << static_cast<int>(p.hp) << "/" 
@@ -291,11 +331,15 @@ void plyGame() {
             pUser.gold = 100;
             pUser.level = 1;
             pUser.hp = gMaxHp(pUser.level);
+            break;
         }
         case 'L':
         {
-            //TODO List saves
+            cout << "Enter the name of a character to load" << endl;
+            pUser.name = gInStr();
+            ldGame(pUser, guns, charms);
             //TODO Load game
+            break;
         }
     }
     do{
@@ -329,7 +373,7 @@ void plyGame() {
             }
         }
     } while(!qGame);
-    //TODO Save game here
+    svGame(pUser, guns, charms);
 }
 
 /******************************************************************************/

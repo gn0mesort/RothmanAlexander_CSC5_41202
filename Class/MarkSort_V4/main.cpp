@@ -17,23 +17,25 @@ using namespace std;
 //Global Constants
 
 //Function Prototypes
-void fillAry(int [], int);
+int * fillAry(int);
 void prntAry(int [], int, int);
 void markSrt(int [], int);
 
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
-    const int SIZE = 100; //Size of the array
-    int arr[SIZE]; //The array to sort
+    int size = 100; //Size of the array
+    int *arr; //The array to sort
 
     srand(static_cast<unsigned int> (time(0))); //Seed PRNG
 
-    fillAry(arr, SIZE); //Fill array
-    prntAry(arr, SIZE, 10); //Print array
-    markSrt(arr, SIZE); //Test sort
-    prntAry(arr, SIZE, 10); //Print sorted array
+    arr = fillAry(size); //Fill array
+    prntAry(arr, size, 10); //Print array
+    markSrt(arr, size); //Test sort
+    prntAry(arr, size, 10); //Print sorted array
 
+    delete []arr;
+    
     //Exit
     return 0;
 }
@@ -47,11 +49,14 @@ int main(int argc, char** argv) {
 //  length : the length of the array
 //Output
 //  arr : the filled array
-void fillAry(int arr[], int length) {
+int *fillAry(int length) {
+    int *arr = new int[length];
     //loop and fill the array with random numbers
     for (int i = 0; i < length; ++i) {
         arr[i] = rand() % 90 + 10;
     }
+    
+    return arr;
 }
 
 /******************************************************************************/

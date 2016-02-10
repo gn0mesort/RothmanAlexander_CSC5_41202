@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cstring>
 #include <vector>
 
 using namespace std;
@@ -419,27 +420,67 @@ void bBoard(const vector<Player> enemies, int &bounty) {
 void ldWrds(string *words, int length) {
     ifstream iFile;
 
-    iFile.open("wdleasy.txt");
+    iFile.open("wdlcur.txt");
     for (int i = 0; iFile >> *(words + i); ++i);
     iFile.clear();
 }
 
 bool guess(string word, Player &p) {
+    const int ALPHAS = 26,
+              LS = 2;
     string mWord = mask(word);
-    unsigned short gCount = p.eqCharm.def;
-    for(int i = 0; i < gCount; ++i){
-        char guess = rand() % 26 + 97;
+    ifstream iFile;
+    unsigned short gCount = p.eqCharm.def,
+                   total;
+    unsigned short lfreq[ALPHAS][LS];
+    
+    iFile.open("freq.dat");
+    for(int i = 0; i < ALPHAS; ++i){
+        lfreq[i][0] = i;
+        iFile >> lfreq[i][1];
+    }
+    iFile.close();
+    
+    /*
+    for(int i = 0; i < ALPHAS; ++i){
+        cout << static_cast<char>(lfreq[i][0] + 97) << ":" << lfreq[i][1] << endl;
+    }
+    */
+    
+    for(int i = 0; i < ALPHAS; ++i){
+        total += lfreq[i][1];
+    }
+    
+    char *gList = new char[total];
+    
+    for(int i = 0; i < total; ++i){
+        gList[i] = 0;
+    }
+    
+    string temp;
+    for(int i = 0; i < ALPHAS; ++i){
+        
+        for(int j = 0; j < lfreq[i][1]; ++j){
+            temp +=  static_cast<char>(lfreq[i][0] + 97);
+        }
+    }
+    strcpy(gList, temp.c_str());
+    
+    for(int i = gCount; i > 0; --i){
+        char guess = gList[rand() % total];
         cout << guess;
         if(cntns(word, guess)){
             unmask(word, mWord, guess);
         }
         if(mWord == word){
             cout << endl;
+            delete [] gList;
             return true;
         }
     }
     cout << endl;
         
+    delete [] gList;
     return false;
 }
 
@@ -524,7 +565,7 @@ void unmask(string &oWord, string &mWord, char key) {
 }
 
 bool battle(Player &user, Player &opnt) {
-    const int WS = 4473;
+    const int WS = 125;
     bool btlOver = false,
             r;
     unsigned short gCount = user.eqCharm.def,

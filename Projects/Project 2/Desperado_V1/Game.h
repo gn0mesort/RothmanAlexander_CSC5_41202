@@ -23,7 +23,7 @@ struct Charm{
 };
 
 struct Player{
-    unsigned short hp; 
+    short hp; 
     unsigned short  level;
     unsigned short gold;
     string name;

@@ -26,6 +26,7 @@ using namespace std;
 //Function Prototypes
 void frmtOpt(string);
 void gChoice(char[], const string[], int);
+bool chkFile(const string &);
 char gInput(void);
 unsigned short gMaxHp(unsigned char);
 string gInStr(void);
@@ -40,7 +41,6 @@ void svGame(string);
 void ldGame(string);
 char shwMenu(string [], int);
 void plyGame(void);
-void options(void);
 //Struct Functions
 bool battle(Player &, Player &);
 vector<Gun> ldGns();
@@ -48,33 +48,47 @@ vector<Charm> ldChrms();
 vector<Player> ldEnms();
 void svGame(const Player &);
 void pPlayer(const Player &);
+void shHeal(Player &);
+void shChrms(const vector<Charm> &, Player &); 
+void shGns(const vector<Gun> &, Player &);
+int fndGn(const vector<Gun> &, const Gun &);
+int fndChrm(const vector<Charm> &, const Charm &);
+void svGame(const Player &, const vector<Gun> &, const vector<Charm> &);
+void ldGame(Player &, const vector<Gun> &, const vector<Charm> &); 
+void pPlayer(const Player &); 
+vector<Player> ldEnms(const vector<Gun> &, const vector<Charm> &);
+vector<Charm> ldChrms();
+vector<Gun> ldGns();
 
 //Begin Execution
-
 int main(int argc, char** argv) {
-    bool quit = false,
-            loaded = false;
-    const int MAIN_MENU_SIZE = 3;
-    string mMenu[] = {"Play", "Options", "Quit"};
+    //Declaration and Initialization
+    //Constants
+    const int MS = 3; //The length of the menu
+    //Variables
+    bool quit = false; //Flag to control quitting the game
+    //Collections
+    string mMenu[] = {"Play", "Help", "Quit"}; //The main menu
 
-    srand(static_cast<int> (time(0)));
+    srand(static_cast<int> (time(0))); //Seed PRNG
 
-    do {
-        dspFile("header.txt");
-        switch (shwMenu(mMenu, MAIN_MENU_SIZE)) {
-            case 'P':
+    //Main Menu
+    do { //While Quit is not selected
+        dspFile("header.txt"); //Show the game header
+        switch (shwMenu(mMenu, MS)) { //Show the menu
+            case 'P': //Play Game
             {
                 plyGame();
                 pause();
                 break;
             }
-            case 'O':
+            case 'H': //Display Help
             {
-                //TODO Options Menu
+                dspFile("help.dat");
                 pause();
                 break;
             }
-            case 'Q':
+            case 'Q': //Quit
             {
                 quit = true;
                 break;
@@ -86,39 +100,64 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-bool chkFile(string path) {
-    ifstream file;
-    file.open(path.c_str());
-    if (file.good()) {
-        file.close();
+/******************************************************************************/
+/**********************************Check File**********************************/
+/******************************************************************************/
+//  Check if a file exists on the system
+//Inputs
+//  &path : The path to check for a file on
+//Outputs
+//  true if the file exists
+//  false otherwise
+bool chkFile(const string &path) {
+    //Objects
+    ifstream file; //File stream for checking the file
+    
+    file.open(path.c_str()); //Attempt to open the file
+    if (file.good()) { //If the file is opened and good
+        file.close(); //Close the file
         return true;
-    } else {
-        file.close();
+    } else { //Otherwise
+        file.close(); //close the file
         return false;
     }
 }
 
+/******************************************************************************/
+/***********************************Shop Heal**********************************/
+/******************************************************************************/
+//  Processing for the Shaman healing menu
+//Inputs
+//  &user : The game's player
 void shHeal(Player &user) {
-    const int MS = 2;
-    bool leave = false;
-    string menu[] = {"Yes", "No"};
-    dspFile("shamanheal.txt");
-    do {
-        cout << "Healing costs " << (gMaxHp(user.level) - user.hp) * 10 << " gold"
-                << endl;
+    //Constants
+    const int MS = 2; //The length of the menu
+    //Variables
+    bool leave = false; //Whether or not to leave this menu
+    //Collections
+    string menu[] = {"Yes", "No"}; //The healing menu
+    
+    dspFile("shamanheal.txt"); //Display flavor text
+    do { //While the player doesn't want to leave
+        //Output cost of healing
+        cout << "Healing costs " << (gMaxHp(user.level) - user.hp) * 10 
+             << " gold" << endl;
         cout << "Heal your wounds?" << endl;
-        switch (shwMenu(menu, MS)) {
-            case 'Y':
+        switch (shwMenu(menu, MS)) { //Display menu
+            case 'Y': //If you want to heal
             {
+                //Check if the player has enough gold to pay
                 if (user.gold > (gMaxHp(user.level) - user.hp) * 10) {
+                    //Subtract the cost from the player's total gold
                     user.gold -= (gMaxHp(user.level) - user.hp) * 10;
+                    //Heal the player
                     user.hp = gMaxHp(user.level);
                 } else {
                     cout << "You don't have enough gold" << endl;
                 }
                 break;
             }
-            case 'N':
+            case 'N': //If you don't want to heal
             {
                 leave = true;
                 break;
@@ -127,26 +166,40 @@ void shHeal(Player &user) {
     } while (!leave);
 }
 
+/******************************************************************************/
+/**********************************Shop Charms*********************************/
+/******************************************************************************/
+//  Processing for the Shaman shopping menu
+//Inputs
+//  &charms : A vector containing the list of charms that exist in the game
+//  &user : The game's player
 void shChrms(const vector<Charm> &charms, Player &user) {
-    char choice;
-    dspFile("shamanshop.txt");
+    //Variables
+    char choice; //The player's choice in the menu
+    
+    dspFile("shamanshop.txt"); //Display flavor text
     cout << "INVENTORY:" << endl;
-    for (int i = 0; i < charms.size(); ++i) {
+    for (int i = 0; i < charms.size(); ++i) { //Show the inventory
+        //Display the charm's name
         cout << "(" << i + 1 << ") " << charms[i].name << endl;
+        //Display charm attributes
         cout << '\t' << charms[i].dsc << endl;
         cout << '\t' << "DEF:  " << static_cast<int> (charms[i].def) << endl;
         cout << '\t' << "COST: " << charms[i].def * 100 << endl;
     }
+    //Special leave option
     cout << "(0) Leave" << endl;
-    do {
+    do { //While the player doesn't want to leave
         cout << "What would you like to buy?" << endl;
-        choice = gInput();
-        for (int i = 0; i < charms.size(); ++i) {
-            if ((choice - 48) == i + 1) {
-                if (user.gold >= charms[i].def * 100) {
-                    user.gold -= charms[i].def * 100;
+        choice = gInput(); //Get the player's choice
+        for (int i = 0; i < charms.size(); ++i) { //Search for the selected charm
+            if ((choice - 48) == i + 1) { //If the player's choice equals one of the options
+                if (user.gold >= charms[i].def * 100) { //If the player can afford their selection
+                    //Subtract cost from the player's total gold
+                    user.gold -= charms[i].def * 100; 
+                    //Equip the newly purchased charm
                     user.eqCharm = charms[i];
-                } else {
+                } else { //If the player doesn't have enough gold
                     cout << "You don't have enough gold" << endl;
                 }
             }
@@ -154,27 +207,41 @@ void shChrms(const vector<Charm> &charms, Player &user) {
     } while (choice != '0');
 }
 
+/******************************************************************************/
+/***********************************Shop Guns**********************************/
+/******************************************************************************/
+//  Processing for the Gunsmith shopping menu
+//Inputs
+//  &guns : A vector containing the list of guns that exist in the game
+//  &user : The game's player
 void shGns(const vector<Gun> &guns, Player &user) {
-    char choice;
-    dspFile("gunsmith.txt");
+    //Variables
+    char choice; //The player's choice in the menu
+    
+    dspFile("gunsmith.txt"); //Display flavor text
     cout << "INVENTORY:" << endl;
-    for (int i = 0; i < guns.size(); ++i) {
+    for (int i = 0; i < guns.size(); ++i) { //Show inventory
+        //Display the gun's name
         cout << "(" << i + 1 << ") " << guns[i].name << endl;
+        //Display gun attributes
         cout << '\t' << guns[i].dsc << endl;
         cout << '\t' << "ATK:  " << static_cast<int> (guns[i].atk) << endl;
         cout << '\t' << "AMMO: " << guns[i].ammo << endl;
         cout << '\t' << "COST: " << guns[i].atk * 100 << endl;
     }
+    //Special leave option
     cout << "(0) Leave" << endl;
-    do {
+    do { //While the player doesn't want to leave
         cout << "What would you like to buy?" << endl;
-        choice = gInput();
+        choice = gInput(); //Get the player's choice
         for (int i = 0; i < guns.size(); ++i) {
-            if ((choice - 48) == i + 1) {
-                if (user.gold >= guns[i].atk * 100) {
+            if ((choice - 48) == i + 1) { //If the player's choice equals one of the options
+                if (user.gold >= guns[i].atk * 100) { //If the player can afford their choice
+                    //Subtract cost from the player's total gold
                     user.gold -= guns[i].atk * 100;
+                    //Equip the newly purchased charm
                     user.eqGun = guns[i];
-                } else {
+                } else { //If the player doesn't have enough gold
                     cout << "You don't have enough gold" << endl;
                 }
             }
@@ -182,152 +249,247 @@ void shGns(const vector<Gun> &guns, Player &user) {
     } while (choice != '0');
 }
 
+/******************************************************************************/
+/***********************************Find Gun***********************************/
+/******************************************************************************/
+//  Linear search a vector for a gun
+//Inputs
+//  &vec : The vector to search
+//  &key : The Gun value to find
+//Output
+//  An integer representing the position of a Gun value in the vector
+//  An output of -1 means not found
 int fndGn(const vector<Gun> &vec, const Gun &key) {
-    for (int i = 0; i < vec.size(); ++i) {
+    for (int i = 0; i < vec.size(); ++i) { //For every value in a vector
+        //Compare all values in a Gun object
         if (vec[i].name == key.name && vec[i].dsc == key.dsc
-                && vec[i].ammo == key.ammo && vec[i].atk == key.atk) {
+            && vec[i].ammo == key.ammo && vec[i].atk == key.atk) {
+            //Return the position
             return i;
         }
     }
-
+    
+    //Return not found
     return -1;
 }
 
+/******************************************************************************/
+/**********************************Find Charm**********************************/
+/******************************************************************************/
+//  Linear search a vector for a charm
+//Inputs
+//  &vec : The vector to search
+//  &key : The Charm value to find
+//Output
+//  An integer representing the position of a Charm value in the vector
+//  An output of -1 means not found
 int fndChrm(const vector<Charm> &vec, const Charm &key) {
-    for (int i = 0; i < vec.size(); ++i) {
+    for (int i = 0; i < vec.size(); ++i) { //For every value in a vector
+        //Compare all values in a Charm object
         if (vec[i].name == key.name && vec[i].dsc == key.dsc
-                && vec[i].def == key.def) {
+            && vec[i].def == key.def) {
+            //Return the position
             return i;
         }
     }
 
+    //Return not found
     return -1;
 }
 
+/******************************************************************************/
+/***********************************Save Game**********************************/
+/******************************************************************************/
+//  Save game data to a file
+//Inputs
+//  &user : The game's player
+//  &guns : The vector containing the list of guns in the game
+//  &charms : The vector containing the list of charms in the game
 void svGame(const Player &user, const vector<Gun> &guns,
-        const vector<Charm>&charms) {
-    string path = user.name + ".sav";
-    ofstream oFile;
-    oFile.open(path.c_str());
-    oFile << user.name << endl;
-    oFile << static_cast<int> (user.level) << endl;
-    oFile << static_cast<int> (user.hp) << endl;
-    oFile << fndGn(guns, user.eqGun) << endl;
-    oFile << fndChrm(charms, user.eqCharm) << endl;
-    oFile << user.gold << endl;
-    oFile.close();
+            const vector<Charm> &charms) {
+    //Objects
+    string path = user.name + ".sav"; //The path to save to
+    ofstream oFile; //The output file
+    
+    oFile.open(path.c_str()); //Open the file
+    oFile << user.name << endl; //Output the user's name
+    oFile << static_cast<int> (user.level) << endl; //Output the user's level
+    oFile << static_cast<int> (user.hp) << endl; //Output the user's hp
+    oFile << fndGn(guns, user.eqGun) << endl; //Output the user's gun
+    oFile << fndChrm(charms, user.eqCharm) << endl; //Output the user's charm
+    oFile << user.gold << endl; //Output the user's current gold
+    oFile.close(); //Close the file
 }
 
-void ldGame(Player &user, const vector<Gun> &guns,
-        const vector<Charm> &charms) {
-    string path = user.name + ".sav",
-            level,
-            hp;
-    short tLevel;
-    int gun,
-            charm;
-    ifstream iFile;
-    iFile.open(path.c_str());
-    iFile >> user.name;
-    iFile >> level;
+/******************************************************************************/
+/***********************************Load Game**********************************/
+/******************************************************************************/
+//  Load game data from a file
+//Inputs
+//  &user : The game's player
+//  &guns : The vector containing the list of guns in the game
+//  &charms : The vector containing the list of charms in the game
+void ldGame(Player &user, const vector<Gun> &guns, 
+            const vector<Charm> &charms) {
+    //Variables
+    int gun, //The gun to equip to the player
+        charm; //The charm to equip to the player
+    //Objects
+    string path = user.name + ".sav", //The file path
+           level, //The player's level as a string
+           hp; //The player's hp as a string 
+    ifstream iFile; //The input file
+    
+    iFile.open(path.c_str()); //Open the file
+    iFile >> user.name; //Read in the player's name
+    iFile >> level; //Read in the level
+    //Convert the Level to an integer type
     istringstream cnvLvl(level);
     cnvLvl >> user.level;
-    iFile >> hp;
+    iFile >> hp; //Read in the player's hp
+    //Convert the HP to an integer type
     istringstream cnvHp(hp);
     cnvHp >> user.hp;
-    iFile >> gun;
-    user.eqGun = guns[gun];
-    iFile >> charm;
-    user.eqCharm = charms[charm];
-    iFile >> user.gold;
-    iFile.close();
+    iFile >> gun; //Read in gun
+    user.eqGun = guns[gun]; //Equip the gun
+    iFile >> charm; //Read in charm
+    user.eqCharm = charms[charm]; //Equip the charm
+    iFile >> user.gold; //Read in the player's gold
+    iFile.close(); //Close the file
 }
 
+/******************************************************************************/
+/***********************************Print Player*******************************/
+/******************************************************************************/
+//  Print the player's attributes
+//Inputs
+//  &p : The game's player
 void pPlayer(const Player &p) {
+    //Output the player's name
     cout << "NAME:  " << p.name << endl;
+    //Output the player's level
     cout << "LEVEL: " << static_cast<int> (p.level) << endl;
+    //Output the player's hp
     cout << "HP:    " << static_cast<int> (p.hp) << "/"
-            << static_cast<int> (gMaxHp(p.level)) << endl;
+         << static_cast<int> (gMaxHp(p.level)) << endl;
+    //Output the player's current gun
     cout << "GUN:   " << p.eqGun.name << endl;
+    //Output the player's ammo
     cout << "AMMO:  " << p.eqGun.cAmmo << "/" << p.eqGun.ammo << endl;
+    //Output the player's atk
     cout << "ATK:   " << static_cast<int> (p.eqGun.atk) << endl;
+    //Output the player's current charm
     cout << "CHARM: " << p.eqCharm.name << endl;
+    //Output the player's def
     cout << "DEF:   " << static_cast<int> (p.eqCharm.def) << endl;
+    //Output the player's gold
     cout << "GOLD:  " << p.gold << endl;
 }
 
-vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms) {
-    string level,
-            gold,
-            charm,
-            gun;
-    Player temp;
-    ifstream iFile;
-    vector<Player> enemies;
+/******************************************************************************/
+/***********************************Load Enemies*******************************/
+/******************************************************************************/
+//  Load enemy data from a file
+//Inputs
+//  &guns : The list of guns in the game
+//  &charms : The list of charms in the game
+//Outputs
+//  enemies : a vector containing the loaded enemy data
+vector<Player> ldEnms(const vector<Gun> &guns, const vector<Charm> &charms) {
+    //Objects 
+    string level, //The character's level
+           gold, //The character's gold
+           charm, //The character's charm
+           gun; //The character's gun
+    Player temp; //A temporary player value
+    ifstream iFile; //The file stream
+    //Collection
+    vector<Player> enemies; //The vector to return
 
-    iFile.open("enemies.dat");
-    while (iFile.good()) {
-        getline(iFile, temp.name);
-        temp.name = trim(temp.name);
-        getline(iFile, level);
-        istringstream cnvLvl(level);
+    iFile.open("enemies.dat"); //Open the file
+    while (iFile.good()) { //While the file is good
+        getline(iFile, temp.name); //Read in the character's name
+        temp.name = trim(temp.name); //Trim the name
+        getline(iFile, level); //Read in the level
+        //Convert the level from a string to an integer type
+        istringstream cnvLvl(level); 
         cnvLvl >> temp.level;
-        getline(iFile, gold);
-        getline(iFile, charm);
-        getline(iFile, gun);
-        temp.hp = gMaxHp(temp.level);
-        istringstream cnvGold(gold);
+        getline(iFile, gold); //Read in gold
+        getline(iFile, charm); //Read in charm
+        getline(iFile, gun); //Read in gun
+        temp.hp = gMaxHp(temp.level); //Set hp
+        //Convert gold from a string to an integer type
+        istringstream cnvGold(gold); 
         cnvGold >> temp.gold;
-        temp.eqCharm = charms[charm.at(0) - 48];
-        temp.eqGun = guns[gun.at(0) - 48];
-        enemies.push_back(temp);
+        temp.eqCharm = charms[charm.at(0) - 48]; //Equip the gun
+        temp.eqGun = guns[gun.at(0) - 48]; //Equip the charm
+        enemies.push_back(temp); //Copy temp to the back of enemies
     }
-    iFile.close();
+    iFile.close(); //Close the file
 
     return enemies;
 }
 
+/******************************************************************************/
+/***********************************Load Charms********************************/
+/******************************************************************************/
+//  Load charm data from a file
+//Outputs
+//  charms : a vector containing the loaded charms data
 vector<Charm> ldChrms() {
-    string def;
-    Charm temp;
-    ifstream iFile;
-    vector<Charm> charms;
+    //Objects
+    string def; //The def value of a charm
+    Charm temp; //A temporary charm value
+    ifstream iFile; //The file stream
+    //Collections
+    vector<Charm> charms; //The collection of charms to return
 
-    iFile.open("charms.dat");
-    while (iFile.good()) {
-        getline(iFile, temp.name);
-        getline(iFile, temp.dsc);
-        getline(iFile, def);
+    iFile.open("charms.dat"); //Open the file
+    while (iFile.good()) { //While the file is good
+        getline(iFile, temp.name); //Read in the name
+        getline(iFile, temp.dsc); //Read in the description
+        getline(iFile, def); //Read in the def value
+        //Convert def from a string to an integer type
         istringstream convert(def);
         convert >> temp.def;
-        charms.push_back(temp);
+        charms.push_back(temp); //Copy temp to the list of charms
     }
-    iFile.close();
+    iFile.close(); //Close the file
 
     return charms;
 }
 
+/******************************************************************************/
+/***********************************Load Guns**********************************/
+/******************************************************************************/
+//  Load gun data from a file
+//Outputs
+//  guns : a vector containing the loaded gun data
 vector<Gun> ldGns() {
-    string ammo,
-            atk;
-    Gun temp;
-    ifstream iFile;
-    vector<Gun> guns;
+    //Objects
+    string ammo, //The maximum ammo value
+           atk; //The atk value
+    Gun temp; //A temporary gun value
+    ifstream iFile; //The file stream
+    //Collections
+    vector<Gun> guns; //The list of guns to return
 
-    iFile.open("guns.dat");
-    while (iFile.good()) {
-        getline(iFile, temp.name);
-        getline(iFile, temp.dsc);
-        getline(iFile, ammo);
-        getline(iFile, atk);
+    iFile.open("guns.dat"); //Open the file
+    while (iFile.good()) { //While the file is good
+        getline(iFile, temp.name); //Read in the name
+        getline(iFile, temp.dsc); //Read in the description
+        getline(iFile, ammo); //Read in the ammo
+        getline(iFile, atk); //Read in the atk
+        //Convert ammo from a string to an integer type
         istringstream cnvAmmo(ammo);
         cnvAmmo >> temp.ammo;
-        temp.cAmmo = temp.ammo;
+        temp.cAmmo = temp.ammo; //Set current ammo to max ammo
+        //Convert atk from a string to an integer type
         istringstream cnvAtk(atk);
         cnvAtk >> temp.atk;
-        guns.push_back(temp);
+        guns.push_back(temp); //Copy temp to the back of the guns collection
     }
-    iFile.close();
+    iFile.close(); //Close file
 
     return guns;
 }
@@ -466,11 +628,14 @@ bool guess(string word, Player &p) {
     }
     strcpy(gList, temp.c_str());
 
-    for (int i = gCount; i > 0; --i) {
+    cout << "OPPONENTS GUESSES: ";
+    for (int i = gCount; i > 0;) {
         char guess = gList[rand() % total];
         cout << guess;
         if (cntns(word, guess)) {
             unmask(word, mWord, guess);
+        } else {
+            --i;
         }
         if (mWord == word) {
             cout << endl;
@@ -494,6 +659,26 @@ string trim(string str) {
     }
 
     return r;
+}
+
+/******************************************************************************/
+/***********************************Is Word************************************/
+/******************************************************************************/
+//  Checks if a string only contains alphabetic characters
+//Inputs
+//  word : the string to check
+//  length : the length of the input string
+//Outputs
+//  true if the string only contains alphabetic characters
+//  false if the string contains non alphabetic characters
+
+bool isWord(string word) {
+    for (int i = 0; i < word.size(); ++i) { //loop through every character in word
+        if (word.at(i) < 96 || word.at(i) > 123) {
+            return false;
+        } //if word only contains alphabetic characters
+    }
+    return true;
 }
 
 /******************************************************************************/
@@ -564,6 +749,12 @@ void unmask(string &oWord, string &mWord, char key) {
     }
 }
 
+void toLCase(string &word) {
+    for (int i = 0; i < word.size(); ++i) {
+        word.at(i) == tolower(word.at(i));
+    }
+}
+
 bool battle(Player &user, Player &opnt) {
     const int WS = 125;
     bool btlOver = false,
@@ -589,7 +780,10 @@ bool battle(Player &user, Player &opnt) {
             cout << "AMMO: " << user.eqGun.cAmmo << "/" << user.eqGun.ammo
                     << endl;
             cout << "Choose a word to fire" << endl;
-            uWord = gInStr();
+            do {
+                uWord = gInStr();
+                toLCase(uWord);
+            } while (!isWord(uWord));
             if (!guess(uWord, opnt)) {
                 opnt.hp -= user.eqGun.atk;
                 cout << opnt.name << " was hit!" << endl;

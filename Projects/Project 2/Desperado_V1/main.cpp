@@ -6,15 +6,15 @@
  */
 
 //System Libraries
-#include <cstdlib>
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <cstring>
-#include <vector>
+#include <cstdlib> //C Standard Library
+#include <cmath> //Math Library
+#include <iostream> //Standard I/O
+#include <iomanip> //I/O Manipulation
+#include <fstream> //File I/O
+#include <string> //String operations
+#include <sstream> //String Streams
+#include <cstring> //C Strings
+#include <vector> //Vectors
 
 using namespace std;
 
@@ -64,6 +64,14 @@ void bBoard(const vector<Player> &, int &);
 void ldWrds(string *, int);
 bool guess(string, Player &);
 string trim(string); 
+bool isWord(string);
+string mask(string);
+bool cntns(string, char); 
+void gSort(char [], int);
+void unmask(string &, string &, char);
+void toLCase(string &);
+bool battle(Player &, Player &);
+
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
@@ -782,16 +790,14 @@ string trim(string str) {
 //  Checks if a string only contains alphabetic characters
 //Inputs
 //  word : the string to check
-//  length : the length of the input string
 //Outputs
 //  true if the string only contains alphabetic characters
 //  false if the string contains non alphabetic characters
-
 bool isWord(string word) {
-    for (int i = 0; i < word.size(); ++i) { //loop through every character in word
+    for (int i = 0; i < word.size(); ++i) { //Loop through every character in word
         if (word.at(i) < 96 || word.at(i) > 123) {
             return false;
-        } //if word only contains alphabetic characters
+        } //If word only contains alphabetic characters
     }
     return true;
 }
@@ -799,14 +805,16 @@ bool isWord(string word) {
 /******************************************************************************/
 /************************************Mask**************************************/
 /******************************************************************************/
-//  Puts a string on equal length to an input string into a new array
-//  Fills the new string with the given character
-
+//  Returns a string of equal length to the input string filled with *'s
+//Inputs
+//  oWord : The original word
+//Outputs
+//  r : The masked word
 string mask(string oWord) {
-    string r;
+    string r; //The masked word
 
-    for (int i = 0; i < oWord.size(); ++i) { //loop through the words
-        r += '*';
+    for (int i = 0; i < oWord.size(); ++i) { //loop through the characters in oWord
+        r += '*'; //Copy a * to the masked word
     }
 
     return r;
@@ -816,7 +824,11 @@ string mask(string oWord) {
 /**********************************Contains************************************/
 /******************************************************************************/
 //  A function to determine if a string contains a character
-
+//Inputs
+//  word : The word to search
+//  key : The character to search for
+//Outputs
+// true if the character is found otherwise false
 bool cntns(string word, char key) {
     for (int i = 0; i < word.length(); ++i) { //loop through word
         if (word.at(i) == key) {
@@ -832,9 +844,10 @@ bool cntns(string word, char key) {
 /******************************************************************************/
 //  Sort a character array. Weights null characters as higher than all others
 //Inputs
-//  cArr : the character array to sort
-//  length : the length of the array to sort
-
+//  cArr : The character array to sort
+//  length : The length of the array to sort
+//Outputs
+//  cArr : The input array after sorting
 void gSort(char cArr[], int length) {
     for (int pos = 1; pos < length;) { //Gnome Sort modified to handle null terminators
         if (cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0') { //if the current character is greater than the previous one or null
@@ -855,7 +868,12 @@ void gSort(char cArr[], int length) {
 /*********************************Unmask***************************************/
 /******************************************************************************/
 //  Unmask a single character in a masked string based on an unmasked string
-
+//Inputs
+//  &oWord : The original word
+//  &mWord : The masked word
+//  key : The character to search for
+//Outputs
+//  &mWord : With all instances of key inserted in the correct positions
 void unmask(string &oWord, string &mWord, char key) {
     for (int i = 0; i < oWord.size(); ++i) { //loop through all characters
         if (oWord.at(i) == key) { //compare each character to the guess character
@@ -864,136 +882,172 @@ void unmask(string &oWord, string &mWord, char key) {
     }
 }
 
+/******************************************************************************/
+/*********************************To Lower Case********************************/
+/******************************************************************************/
+//  Convert a string to all lowercase letters
+//Inputs
+//  &word : The input string to convert
+//Outputs
+//  &word : The input string after conversion
 void toLCase(string &word) {
-    for (int i = 0; i < word.size(); ++i) {
-        word.at(i) == tolower(word.at(i));
+    for (int i = 0; i < word.size(); ++i) { //For each character in word
+        word.at(i) == tolower(word.at(i)); //Set the character to lowercase
     }
 }
 
+/******************************************************************************/
+/*************************************Battle***********************************/
+/******************************************************************************/
+//  Battle processing
+//Inputs
+//  &user : The object representing the player of the game
+//  &opnt : The player's opponent
+//Outputs
+//  true if the player wins the battle and false otherwise
 bool battle(Player &user, Player &opnt) {
-    const int WS = 125;
-    bool btlOver = false,
-            r;
-    unsigned short gCount = user.eqCharm.def,
-            usedPos = 0;
-    string uWord,
-            oWord,
-            mWord;
-    char used[26] = {0};
-    string words[WS];
+    //Constants
+    const int WS = 125, //The size of the word list
+              ALPHAS = 26; //The size of the alphabet
+    //Variables
+    bool btlOver = false, //Whether or not the battle is finished
+         r; //The return value
+    unsigned short gCount = user.eqCharm.def, //The number of guesses the player gets
+                   usedPos = 0; //The current position in the used character array
+    //Objects
+    string uWord, //The user input word
+           oWord, //The original word to guess
+           mWord; //The masked word to guess
+    //Collections
+    char used[ALPHAS] = {0}; //The array of used character
+    string words[WS]; //The word list
 
-    ldWrds(words, WS);
+    ldWrds(words, WS); //Load the words for the word list
 
-    do {
+    do { //While the battle isn't over
         //Player Turn
         cout << user.name << "'s turn!" << endl;
-        if (user.eqGun.cAmmo > 0) {
+        if (user.eqGun.cAmmo > 0) { //If the player has ammo
+            //Output battle status
             cout << "PLAYER HP:   " << user.hp << "/" << gMaxHp(user.level)
                     << endl;
             cout << "OPPONENT HP: " << opnt.hp << "/" << gMaxHp(opnt.level)
                     << endl;
             cout << "AMMO: " << user.eqGun.cAmmo << "/" << user.eqGun.ammo
                     << endl;
+            //Input a word
             cout << "Choose a word to fire" << endl;
-            do {
-                uWord = gInStr();
-                toLCase(uWord);
+            do { //While the input is not a word
+                uWord = gInStr(); //Get an input string
+                toLCase(uWord); //Covert to lower case
             } while (!isWord(uWord));
-            if (!guess(uWord, opnt)) {
-                opnt.hp -= user.eqGun.atk;
+            if (!guess(uWord, opnt)) { //If the opponent didn't guess your word
+                opnt.hp -= user.eqGun.atk; //Do damage to your opponent
                 cout << opnt.name << " was hit!" << endl;
                 cout << opnt.name << " took " << user.eqGun.atk << " damage"
                         << endl;
-            } else {
+            } else { //Otherwise you miss
                 cout << opnt.name << " dodged your shot!" << endl;
             }
-            user.eqGun.cAmmo--;
-        } else {
+            user.eqGun.cAmmo--; //Reduce current ammo by one
+        } else { //Otherwise reload your gun
             reload(user);
             cout << user.name << " reloaded!" << endl;
         }
         //Opponent Turn
-        if (opnt.hp > 0) {
+        if (opnt.hp > 0) { //If the opponent is not dead
             cout << opnt.name << "'s turn!" << endl;
-            if (opnt.eqGun.cAmmo > 0) {
-                oWord = words[rand() % WS];
-                mWord = mask(oWord);
-                //cout << oWord << endl;
-                do {
-                    char guess;
+            if (opnt.eqGun.cAmmo > 0) { //If the opponent has ammo
+                oWord = words[rand() % WS]; //Pick a random word from the list
+                mWord = mask(oWord); //Mask the word
+                do { //While you haven't guessed the word and you haven't run out of guesses
+                    char guess; //The character that the user guesses
+                    //Display hangman information
                     cout << mWord << endl;
                     cout << "REMAINING GUESSES: " << gCount << endl;
                     cout << "USED CHARACTERS:   " << used << endl;
-                    guess = tolower(gInput());
-                    if (cntns(oWord, guess)) {
-                        unmask(oWord, mWord, guess);
-                    } else {
-                        --gCount;
+                    guess = tolower(gInput()); //Get guess
+                    if (cntns(oWord, guess)) { //If the original word contains your guess
+                        unmask(oWord, mWord, guess); //Unmask that character
+                    } else { //Otherwise
+                        --gCount; //Lose one guess
                     }
-                    if (!cntns(string(used), guess)) {
-                        used[usedPos++] = guess;
+                    if (!cntns(string(used), guess)) { //If used doesn't contain the guess already
+                        used[usedPos++] = guess; //Add the guess and increment the position
                     }
-                    gSort(used, 26);
-
+                    gSort(used, ALPHAS); //Sort the used character array
                 } while (gCount > 0 && mWord != oWord);
+                //Output the original word
                 cout << oWord << endl;
-                if (gCount <= 0) {
-                    user.hp -= opnt.eqGun.atk;
+                if (gCount <= 0) { //If you ran out of guesses
+                    user.hp -= opnt.eqGun.atk; //Take damage
                     cout << user.name << " was hit!" << endl;
                     cout << user.name << " took " << opnt.eqGun.atk << " damage"
                             << endl;
-                } else if (mWord == oWord) {
+                } else if (mWord == oWord) { //Otherwise if you guessed correctly
                     cout << user.name << " dodged the shot!" << endl;
                 }
-                gCount = user.eqCharm.def;
-                for (int i = 0; i < 26; ++i) {
+                gCount = user.eqCharm.def; //Reset your guess count
+                for (int i = 0; i < 26; ++i) { //Reinitialize the used character array
                     used[i] = 0;
                 }
-                usedPos = 0;
+                usedPos = 0; //Reset the used position
 
-                opnt.eqGun.cAmmo--;
-            } else {
+                opnt.eqGun.cAmmo--; //Reduce current ammo by one
+            } else { //Otherwise reload
                 reload(opnt);
                 cout << opnt.name << " reloaded!" << endl;
             }
         }
-        if (user.hp <= 0) {
+        if (user.hp <= 0) { //If the user is dead
             cout << "YOU DIED" << endl;
-            r = false;
-            btlOver = true;
-        } else if (opnt.hp <= 0) {
+            r = false; //Return a loss
+            btlOver = true; //Finish the battle
+        } else if (opnt.hp <= 0) { //If the opponent is dead
             cout << opnt.name << " was defeated" << endl;
             cout << "You were awarded " << opnt.gold << " gold" << endl;
-            r = true;
-            user.gold += opnt.gold;
-            btlOver = true;
+            r = true; //Return a victory
+            user.gold += opnt.gold; //Collect your spoils
+            btlOver = true; //End the battle
         }
     } while (!btlOver);
-    opnt.hp = gMaxHp(opnt.level);
+    opnt.hp = gMaxHp(opnt.level); //Reset opponent's hp for later
+    //Reload all guns
+    reload(user);
+    reload(opnt);
 
     return r;
 }
 
+/******************************************************************************/
+/***********************************Play Game**********************************/
+/******************************************************************************/
+//  Main Game processing
 void plyGame() {
-    const int PGMS = 2,
-            GMS = 6;
-    bool qGame = false;
-    int bounty = -1;
-    unsigned short wins = 0;
-    Player pUser;
-    vector<Gun> guns(ldGns());
-    vector<Charm> charms(ldChrms());
-    vector<Player> enemies(ldEnms(guns, charms));
-
-    string pgMenu[] = {"New Game", "Load"};
-    string gMenu[] = {"Bounty Board", "Hunt Bounty",
+    //Constants
+    const int PGMS = 2, //Play game menu size
+              GMS = 6; //Game menu size
+    //Variables
+    bool qGame = false; //Whether or not to quit the game
+    int bounty = -1; //The current bounty
+    unsigned short wins = 0; //The current number of wins
+    //Objects
+    Player pUser; //The player of the game
+    //Collections
+    vector<Gun> guns(ldGns()); //The guns in the game
+    vector<Charm> charms(ldChrms()); //The charms in the game
+    vector<Player> enemies(ldEnms(guns, charms)); //The enemies in the game
+    string pgMenu[] = {"New Game", "Load"}; //The play game menu
+    string gMenu[] = {"Bounty Board", "Hunt Bounty", //The game menu
         "Gunsmith", "Shaman", "Character", "Quit"};
 
-    switch (shwMenu(pgMenu, PGMS)) {
-        case 'N':
+    //Main game processing
+    switch (shwMenu(pgMenu, PGMS)) { //Choose based on menu input
+        case 'N': //New Game
         {
-            dspFile("titlecrawl.txt");
+            dspFile("titlecrawl.txt"); //Display title info
             pause();
+            //Create new character
             cout << "Enter your name" << endl;
             pUser.name = gInStr();
             pUser.eqGun = guns[0];
@@ -1003,15 +1057,18 @@ void plyGame() {
             pUser.hp = gMaxHp(pUser.level);
             break;
         }
-        case 'L':
+        case 'L': //Load Game
         {
+            //Input character to load
             cout << "Enter the name of a character to load" << endl;
             pUser.name = gInStr();
-            if (chkFile(pUser.name + ".sav")) {
-                ldGame(pUser, guns, charms);
-            } else {
+            if (chkFile(pUser.name + ".sav")) { //If the file exists
+                ldGame(pUser, guns, charms); //Load the game
+            } else { //Otherwise create a new game
+                //Output error message
                 cout << "Save not found" << endl;
                 cout << "Creating new game..." << endl;
+                //Create new game
                 dspFile("titlecrawl.txt");
                 pause();
                 pUser.eqGun = guns[0];
@@ -1023,82 +1080,86 @@ void plyGame() {
             break;
         }
     }
+    //Town Menu
     do {
-        dspFile("town.txt");
-        switch (shwMenu(gMenu, GMS)) {
-            case 'B':
+        dspFile("town.txt"); //Display flavor text
+        switch (shwMenu(gMenu, GMS)) { //Choose based on menu input
+            case 'B': //Bounty Board
             {
-                dspFile("bountyboard.txt");
-                bBoard(enemies, bounty);
+                dspFile("bountyboard.txt"); //Display flavor text
+                bBoard(enemies, bounty); //Show bounty board
                 pause();
                 break;
             }
-            case 'H':
+            case 'H': //Hunt Bounty
             {
-                if (bounty != -1) {
-                    reload(pUser);
-                    battle(pUser, enemies[bounty]);
-                } else {
+                if (bounty != -1) { //If bounty is set
+                    reload(pUser); //Reload gun
+                    battle(pUser, enemies[bounty]); //Hunt bounty
+                } else { //Otherwise print error message
                     cout << "You have to choose a bounty first" << endl;
                     cout << "Go to the bounty board" << endl;
                 }
-                if (pUser.hp <= 0) {
+                if (pUser.hp <= 0) { //If player is dead
+                    //Print game over and quit to main menu
                     cout << "GAME OVER" << endl;
                     qGame = true;
-                } else {
-                    if (wins % 5 == 0 && wins != 0) {
-                        pUser.level++;
+                } else { //Otherwise if they're alive
+                    if (wins % 5 == 0 && wins != 0) { //If wins is divisible by 5 and not 0
+                        //Level up processing
+                        pUser.level++; //Increase player level
                         cout << "LEVEL UP!" << endl;
                         cout << "HP increased by "
                                 << gMaxHp(pUser.level) - gMaxHp(pUser.level - 1)
                                 << endl;
+                        //Set player HP
                         pUser.hp = gMaxHp(pUser.level);
                     }
                     pause();
                 }
                 break;
             }
-            case 'G':
+            case 'G': //Gunsmith
             {
-                shGns(guns, pUser);
+                shGns(guns, pUser); //Do gun shop processing
                 pause();
                 break;
             }
-            case 'S':
+            case 'S': //Shaman
             {
-                const int SHMS = 2;
-                string shMenu[] = {"Heal", "Shop"};
-                dspFile("shaman.txt");
-                switch (shwMenu(shMenu, SHMS)) {
-                    case 'H':
+                const int SHMS = 2; //Shaman menu size
+                string shMenu[] = {"Heal", "Shop"}; //Shaman Menu
+                dspFile("shaman.txt"); //Display Flavor text
+                switch (shwMenu(shMenu, SHMS)) { //Choose based on menu input
+                    case 'H': //Heal
                     {
-                        shHeal(pUser);
+                        shHeal(pUser); //Do heal processing
                         break;
                     }
-                    case 'S':
+                    case 'S': //Shop
                     {
-                        shChrms(charms, pUser);
+                        shChrms(charms, pUser); //Do charm shop processing
                         break;
                     }
                 }
                 pause();
                 break;
             }
-            case 'C':
+            case 'C': //Character
             {
-                pPlayer(pUser);
+                pPlayer(pUser); //Display character info
                 pause();
                 break;
             }
-            case 'Q':
+            case 'Q': //Quit
             {
-                qGame = true;
+                qGame = true; //Quit the game
                 break;
             }
         }
     } while (!qGame);
-    if (pUser.hp > 0) {
-        svGame(pUser, guns, charms);
+    if (pUser.hp > 0) { //If you didn't quit because of a game over
+        svGame(pUser, guns, charms); //Save the game
     }
 }
 
@@ -1108,7 +1169,6 @@ void plyGame() {
 //  Write the text from a file to standard out one line at a time
 //Inputs
 //  path : the path to the file to display
-
 void dspFile(string path) {
     string next; //input buffer
     ifstream iFile; //input file stream

@@ -24,53 +24,48 @@ using namespace std;
 //Global Constants
 
 //Function Prototypes
+void pause(void);
 void frmtOpt(string &);
+void dspFile(string);
+void unmask(string &, string &, char);
+void ldWrds(string *, int);
 void gChoice(char [], const string [], int);
+void gSort(char [], int);
+void toLCase(string &);
+void unmask(string &, string &, char);
 bool chkFile(const string &);
+bool cntns(string, char); 
+bool isWord(string);
 char gInput(void);
+short gMaxHp(unsigned short = 1);
+int fndGn(const vector<Gun> &, const Gun &);
+int fndChrm(const vector<Charm> &, const Charm &);
 string gInStr(void);
 string trim(string);
-void dspFile(string);
-void pause(void);
 string mask(string);
-bool cntns(string, char);
-void unmask(string &, string &, char);
 //Game Functions
-void svGame(string);
-void ldGame(string);
-char shwMenu(const string [], int);
 void plyGame(void);
-//Struct Functions
-bool battle(Player &, Player &);
-vector<Gun> ldGns();
-vector<Charm> ldChrms();
-vector<Player> ldEnms();
 void svGame(const Player &);
 void pPlayer(const Player &);
 void shHeal(Player &);
 void shChrms(const vector<Charm> &, Player &); 
 void shGns(const vector<Gun> &, Player &);
-int fndGn(const vector<Gun> &, const Gun &);
-int fndChrm(const vector<Charm> &, const Charm &);
 void svGame(const Player &, const vector<Gun> &, const vector<Charm> &);
 void ldGame(Player &, const vector<Gun> &, const vector<Charm> &); 
 void pPlayer(const Player &); 
-vector<Player> ldEnms(const vector<Gun> &, const vector<Charm> &);
-vector<Charm> ldChrms();
-vector<Gun> ldGns();
-short gMaxHp(unsigned short = 1);
 void reload(Player &);
 void bBoard(const vector<Player> &, int &);
-void ldWrds(string *, int);
 bool guess(string, Player &);
-string trim(string); 
-bool isWord(string);
-string mask(string);
-bool cntns(string, char); 
-void gSort(char [], int);
-void unmask(string &, string &, char);
-void toLCase(string &);
 bool battle(Player &, Player &);
+bool battle(Player &, Player &);
+char shwMenu(const string [], int);
+vector<Gun> ldGns(void);
+vector<Charm> ldChrms(void);
+vector<Player> ldEnms(void);
+vector<Player> ldEnms(const vector<Gun> &, const vector<Charm> &);
+vector<Charm> ldChrms(void);
+vector<Gun> ldGns(void);
+
 
 //Begin Execution
 int main(int argc, char** argv) {

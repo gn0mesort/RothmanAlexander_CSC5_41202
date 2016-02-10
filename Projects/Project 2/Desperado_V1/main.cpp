@@ -31,6 +31,9 @@ string gInStr(void);
 string trim(string);
 void dspFile(string);
 void pause(void);
+string mask(string);
+bool cntns(string, char);
+void unmask(string &, string &, char);
 //Game Functions
 void svGame(string);
 void ldGame(string);
@@ -422,6 +425,21 @@ void ldWrds(string *words, int length) {
 }
 
 bool guess(string word, Player &p) {
+    string mWord = mask(word);
+    unsigned short gCount = p.eqCharm.def;
+    for(int i = 0; i < gCount; ++i){
+        char guess = rand() % 26 + 97;
+        cout << guess;
+        if(cntns(word, guess)){
+            unmask(word, mWord, guess);
+        }
+        if(mWord == word){
+            cout << endl;
+            return true;
+        }
+    }
+    cout << endl;
+        
     return false;
 }
 
@@ -588,9 +606,11 @@ bool battle(Player &user, Player &opnt) {
             cout << opnt.name << " reloaded!" << endl;
         }
         if (user.hp <= 0) {
+            cout << "YOU DIED" << endl;
             r = false;
             btlOver = true;
         } else if (opnt.hp <= 0) {
+            cout << opnt.name << " was defeated" << endl;
             r = true;
             user.gold += opnt.gold;
             btlOver = true;
@@ -667,7 +687,12 @@ void plyGame() {
                     cout << "You have to choose a bounty first" << endl;
                     cout << "Go to the bounty board" << endl;
                 }
-                pause();
+                if (pUser.hp <= 0) {
+                    cout << "GAME OVER" << endl;
+                    qGame = true;
+                } else {
+                    pause();
+                }
                 break;
             }
             case 'G':
@@ -709,7 +734,9 @@ void plyGame() {
             }
         }
     } while (!qGame);
-    svGame(pUser, guns, charms);
+    if (pUser.hp > 0) {
+        svGame(pUser, guns, charms);
+    }
 }
 
 /******************************************************************************/

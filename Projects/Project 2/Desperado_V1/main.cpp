@@ -427,59 +427,59 @@ void ldWrds(string *words, int length) {
 
 bool guess(string word, Player &p) {
     const int ALPHAS = 26,
-              LS = 2;
+            LS = 2;
     string mWord = mask(word);
     ifstream iFile;
     unsigned short gCount = p.eqCharm.def,
-                   total;
+            total;
     unsigned short lfreq[ALPHAS][LS];
-    
+
     iFile.open("freq.dat");
-    for(int i = 0; i < ALPHAS; ++i){
+    for (int i = 0; i < ALPHAS; ++i) {
         lfreq[i][0] = i;
         iFile >> lfreq[i][1];
     }
     iFile.close();
-    
+
     /*
     for(int i = 0; i < ALPHAS; ++i){
         cout << static_cast<char>(lfreq[i][0] + 97) << ":" << lfreq[i][1] << endl;
     }
-    */
-    
-    for(int i = 0; i < ALPHAS; ++i){
+     */
+
+    for (int i = 0; i < ALPHAS; ++i) {
         total += lfreq[i][1];
     }
-    
+
     char *gList = new char[total];
-    
-    for(int i = 0; i < total; ++i){
+
+    for (int i = 0; i < total; ++i) {
         gList[i] = 0;
     }
-    
+
     string temp;
-    for(int i = 0; i < ALPHAS; ++i){
-        
-        for(int j = 0; j < lfreq[i][1]; ++j){
-            temp +=  static_cast<char>(lfreq[i][0] + 97);
+    for (int i = 0; i < ALPHAS; ++i) {
+
+        for (int j = 0; j < lfreq[i][1]; ++j) {
+            temp += static_cast<char> (lfreq[i][0] + 97);
         }
     }
     strcpy(gList, temp.c_str());
-    
-    for(int i = gCount; i > 0; --i){
+
+    for (int i = gCount; i > 0; --i) {
         char guess = gList[rand() % total];
         cout << guess;
-        if(cntns(word, guess)){
+        if (cntns(word, guess)) {
             unmask(word, mWord, guess);
         }
-        if(mWord == word){
+        if (mWord == word) {
             cout << endl;
             delete [] gList;
             return true;
         }
     }
     cout << endl;
-        
+
     delete [] gList;
     return false;
 }
@@ -604,47 +604,49 @@ bool battle(Player &user, Player &opnt) {
             cout << user.name << " reloaded!" << endl;
         }
         //Opponent Turn
-        cout << opnt.name << "'s turn!" << endl;
-        if (opnt.eqGun.cAmmo > 0) {
-            oWord = words[rand() % WS];
-            mWord = mask(oWord);
-            //cout << oWord << endl;
-            do {
-                char guess;
-                cout << mWord << endl;
-                cout << "REMAINING GUESSES: " << gCount << endl;
-                cout << "USED CHARACTERS:   " << used << endl;
-                guess = tolower(gInput());
-                if (cntns(oWord, guess)) {
-                    unmask(oWord, mWord, guess);
-                } else {
-                    --gCount;
-                }
-                if (!cntns(string(used), guess)) {
-                    used[usedPos++] = guess;
-                }
-                gSort(used, 26);
+        if (opnt.hp > 0) {
+            cout << opnt.name << "'s turn!" << endl;
+            if (opnt.eqGun.cAmmo > 0) {
+                oWord = words[rand() % WS];
+                mWord = mask(oWord);
+                //cout << oWord << endl;
+                do {
+                    char guess;
+                    cout << mWord << endl;
+                    cout << "REMAINING GUESSES: " << gCount << endl;
+                    cout << "USED CHARACTERS:   " << used << endl;
+                    guess = tolower(gInput());
+                    if (cntns(oWord, guess)) {
+                        unmask(oWord, mWord, guess);
+                    } else {
+                        --gCount;
+                    }
+                    if (!cntns(string(used), guess)) {
+                        used[usedPos++] = guess;
+                    }
+                    gSort(used, 26);
 
-            } while (gCount > 0 && mWord != oWord);
-            cout << oWord << endl;
-            if (gCount <= 0) {
-                user.hp -= opnt.eqGun.atk;
-                cout << user.name << " was hit!" << endl;
-                cout << user.name << " took " << opnt.eqGun.atk << " damage"
-                        << endl;
-            } else if (mWord == oWord) {
-                cout << user.name << " dodged the shot!" << endl;
-            }
-            gCount = user.eqCharm.def;
-            for (int i = 0; i < 26; ++i) {
-                used[i] = 0;
-            }
-            usedPos = 0;
+                } while (gCount > 0 && mWord != oWord);
+                cout << oWord << endl;
+                if (gCount <= 0) {
+                    user.hp -= opnt.eqGun.atk;
+                    cout << user.name << " was hit!" << endl;
+                    cout << user.name << " took " << opnt.eqGun.atk << " damage"
+                            << endl;
+                } else if (mWord == oWord) {
+                    cout << user.name << " dodged the shot!" << endl;
+                }
+                gCount = user.eqCharm.def;
+                for (int i = 0; i < 26; ++i) {
+                    used[i] = 0;
+                }
+                usedPos = 0;
 
-            opnt.eqGun.cAmmo--;
-        } else {
-            reload(opnt);
-            cout << opnt.name << " reloaded!" << endl;
+                opnt.eqGun.cAmmo--;
+            } else {
+                reload(opnt);
+                cout << opnt.name << " reloaded!" << endl;
+            }
         }
         if (user.hp <= 0) {
             cout << "YOU DIED" << endl;
@@ -652,11 +654,13 @@ bool battle(Player &user, Player &opnt) {
             btlOver = true;
         } else if (opnt.hp <= 0) {
             cout << opnt.name << " was defeated" << endl;
+            cout << "You were awarded " << opnt.gold << " gold" << endl;
             r = true;
             user.gold += opnt.gold;
             btlOver = true;
         }
     } while (!btlOver);
+    opnt.hp = gMaxHp(opnt.level);
 
     return r;
 }
@@ -666,6 +670,7 @@ void plyGame() {
             GMS = 6;
     bool qGame = false;
     int bounty = -1;
+    unsigned short wins = 0;
     Player pUser;
     vector<Gun> guns(ldGns());
     vector<Charm> charms(ldChrms());
@@ -684,7 +689,7 @@ void plyGame() {
             pUser.name = gInStr();
             pUser.eqGun = guns[0];
             pUser.eqCharm = charms[0];
-            pUser.gold = 100;
+            pUser.gold = 1000;
             pUser.level = 1;
             pUser.hp = gMaxHp(pUser.level);
             break;
@@ -702,7 +707,7 @@ void plyGame() {
                 pause();
                 pUser.eqGun = guns[0];
                 pUser.eqCharm = charms[0];
-                pUser.gold = 100;
+                pUser.gold = 1000;
                 pUser.level = 1;
                 pUser.hp = gMaxHp(pUser.level);
             }
@@ -732,6 +737,14 @@ void plyGame() {
                     cout << "GAME OVER" << endl;
                     qGame = true;
                 } else {
+                    if (wins % 5 == 0 && wins != 0) {
+                        pUser.level++;
+                        cout << "LEVEL UP!" << endl;
+                        cout << "HP increased by "
+                                << gMaxHp(pUser.level) - gMaxHp(pUser.level - 1)
+                                << endl;
+                        pUser.hp = gMaxHp(pUser.level);
+                    }
                     pause();
                 }
                 break;

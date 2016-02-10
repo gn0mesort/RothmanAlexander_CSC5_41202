@@ -9,22 +9,22 @@
 #define	GAME_H
 
 struct Gun{
-    unsigned char atk,
-                  ammo,
-                  cAmmo;
+    unsigned short atk,
+                   ammo,
+                   cAmmo;
     string name,
            dsc;
 };
 
 struct Charm{
-    unsigned char def;
+    unsigned short def;
     string name,
            dsc;
 };
 
 struct Player{
     unsigned short hp; 
-    unsigned char  level;
+    unsigned short  level;
     unsigned short gold;
     string name;
     Charm eqCharm;

@@ -228,8 +228,7 @@ void ldGame(Player &user, const vector<Gun> &guns,
     iFile >> user.name;
     iFile >> level;
     istringstream cnvLvl(level);
-    cnvLvl >> tLevel;
-    user.level = tLevel;
+    cnvLvl >> user.level;
     iFile >> hp;
     istringstream cnvHp(hp);
     cnvHp >> user.hp;
@@ -267,10 +266,12 @@ vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms) {
     while (iFile.good()) {
         getline(iFile, temp.name);
         getline(iFile, level);
+        istringstream cnvLvl(level);
+        cnvLvl >> temp.level;
         getline(iFile, gold);
         getline(iFile, charm);
         getline(iFile, gun);
-        temp.hp = gMaxHp(level.at(0));
+        temp.hp = gMaxHp(temp.level);
         istringstream cnvGold(gold);
         cnvGold >> temp.gold;
         temp.eqCharm = charms[charm.at(0) - 48];
@@ -283,7 +284,6 @@ vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms) {
 }
 
 vector<Charm> ldChrms() {
-    short tDef;
     string def;
     Charm temp;
     ifstream iFile;
@@ -295,8 +295,7 @@ vector<Charm> ldChrms() {
         getline(iFile, temp.dsc);
         getline(iFile, def);
         istringstream convert(def);
-        convert >> tDef;
-        temp.def = tDef;
+        convert >> temp.def;
         charms.push_back(temp);
     }
     iFile.close();
@@ -307,7 +306,6 @@ vector<Charm> ldChrms() {
 vector<Gun> ldGns() {
     string ammo,
             atk;
-    unsigned short tAtk;
     Gun temp;
     ifstream iFile;
     vector<Gun> guns;
@@ -322,8 +320,7 @@ vector<Gun> ldGns() {
         cnvAmmo >> temp.ammo;
         temp.cAmmo = temp.ammo;
         istringstream cnvAtk(atk);
-        cnvAtk >> tAtk;
-        temp.atk = tAtk;
+        cnvAtk >> temp.atk;
         guns.push_back(temp);
     }
     iFile.close();
@@ -333,7 +330,7 @@ vector<Gun> ldGns() {
 
 unsigned short gMaxHp(unsigned char level) {
     const unsigned char BASEHP = 100;
-    const float RATE = 0.05;
+    const float RATE = 0.05f;
 
     return BASEHP * (pow((1 + RATE), level));
 }
@@ -396,15 +393,32 @@ char shwMenu(string opts[], int length) {
     return input;
 }
 
+void bBoard(const vector<Player> enemies, int &bounty){
+    char choice;
+    string menu[enemies.size()];
+    
+    for(int i = 0; i < enemies.size() - 1; ++i){
+        menu[i] = enemies[i].name;
+    }
+    choice = shwMenu(menu, enemies.size() - 1);
+    for(int i  = 0; i < enemies.size() - 1; ++i){
+        if(choice == toupper(menu[i].at(0))){
+            cout << "You choose to hunt " << enemies[i].name << endl;
+            bounty = i;
+        }
+    }
+}
+
 void plyGame() {
     const int PGMS = 2,
             GMS = 6;
     bool qGame = false;
+    int bounty = -1;
     Player pUser;
     vector<Gun> guns(ldGns());
     vector<Charm> charms(ldChrms());
-    //vector<Player> enemies(ldEnms(guns, charms));
-
+    vector<Player> enemies(ldEnms(guns, charms));
+    
     string pgMenu[] = {"New Game", "Load"};
     string gMenu[] = {"Bounty Board", "Hunt Bounty",
         "Gunsmith", "Shaman", "Character", "Quit"};
@@ -449,10 +463,19 @@ void plyGame() {
         switch (shwMenu(gMenu, GMS)) {
             case 'B':
             {
+                dspFile("bountyboard.txt");
+                bBoard(enemies, bounty);
                 break;
             }
             case 'H':
             {
+                if(bounty != -1){
+                    
+                }
+                else{
+                    cout << "You have to choose a bounty first" << endl;
+                    cout << "Go to the bounty board" << endl;
+                }
                 break;
             }
             case 'G':

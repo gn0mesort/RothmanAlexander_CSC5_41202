@@ -28,6 +28,7 @@ void gChoice(char[], const string[], int);
 char gInput(void);
 unsigned short gMaxHp(unsigned char);
 string gInStr(void);
+string trim(string);
 void dspFile(string);
 void pause(void);
 //Game Functions
@@ -263,6 +264,7 @@ vector<Player> ldEnms(vector<Gun> guns, vector<Charm> charms) {
     iFile.open("enemies.dat");
     while (iFile.good()) {
         getline(iFile, temp.name);
+        temp.name = trim(temp.name);
         getline(iFile, level);
         istringstream cnvLvl(level);
         cnvLvl >> temp.level;
@@ -400,7 +402,7 @@ void bBoard(const vector<Player> enemies, int &bounty) {
     string menu[enemies.size()];
 
     for (int i = 0; i < enemies.size() - 1; ++i) {
-        menu[i] = enemies[i].name;
+        menu[i] = enemies[i].name + '\n';
     }
     choice = shwMenu(menu, enemies.size() - 1);
     for (int i = 0; i < enemies.size() - 1; ++i) {
@@ -423,11 +425,24 @@ bool guess(string word, Player &p) {
     return false;
 }
 
+string trim(string str) {
+    string r;
+
+    for (int i = 0; i < str.size(); ++i) {
+        if (str.at(i) > 31 && str.at(i) < 127) {
+            r += str.at(i);
+        }
+    }
+
+    return r;
+}
+
 /******************************************************************************/
 /************************************Mask**************************************/
 /******************************************************************************/
 //  Puts a string on equal length to an input string into a new array
 //  Fills the new string with the given character
+
 string mask(string oWord) {
     string r;
 
@@ -442,9 +457,12 @@ string mask(string oWord) {
 /**********************************Contains************************************/
 /******************************************************************************/
 //  A function to determine if a string contains a character
-bool cntns(string word, char key){
-    for(int i = 0; i < word.length(); ++i){ //loop through word
-        if(word.at(i) == key){ return true; } //if a character matches the key return true
+
+bool cntns(string word, char key) {
+    for (int i = 0; i < word.length(); ++i) { //loop through word
+        if (word.at(i) == key) {
+            return true;
+        } //if a character matches the key return true
     }
     //Otherwise return false
     return false;
@@ -457,17 +475,17 @@ bool cntns(string word, char key){
 //Inputs
 //  cArr : the character array to sort
 //  length : the length of the array to sort
-void gSort(char cArr[], int length){
-    for(int pos = 1; pos < length;){ //Gnome Sort modified to handle null terminators
-        if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){ //if the current character is greater than the previous one or null
+
+void gSort(char cArr[], int length) {
+    for (int pos = 1; pos < length;) { //Gnome Sort modified to handle null terminators
+        if (cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0') { //if the current character is greater than the previous one or null
             ++pos; //move one position forward
-        }
-        else if (cArr[pos] <= cArr[pos - 1]){ //If the current character is less than or equal to the previous
+        } else if (cArr[pos] <= cArr[pos - 1]) { //If the current character is less than or equal to the previous
             //Swap the current character and the last
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos - 1] = cArr[pos] ^ cArr[pos - 1];
             cArr[pos] = cArr[pos] ^ cArr[pos - 1];
-            if(pos > 1){ //If the position is greater than one
+            if (pos > 1) { //If the position is greater than one
                 --pos; //Move back one position
             }
         }
@@ -478,9 +496,10 @@ void gSort(char cArr[], int length){
 /*********************************Unmask***************************************/
 /******************************************************************************/
 //  Unmask a single character in a masked string based on an unmasked string
-void unmask(string &oWord, string &mWord, char key){
-    for(int i = 0; i < oWord.size(); ++i){ //loop through all characters
-        if(oWord.at(i) == key){ //compare each character to the guess character
+
+void unmask(string &oWord, string &mWord, char key) {
+    for (int i = 0; i < oWord.size(); ++i) { //loop through all characters
+        if (oWord.at(i) == key) { //compare each character to the guess character
             mWord.at(i) = key; //Unmask the character if they match
         }
     }
@@ -488,9 +507,10 @@ void unmask(string &oWord, string &mWord, char key){
 
 bool battle(Player &user, Player &opnt) {
     const int WS = 4473;
-    bool btlOver = false;
+    bool btlOver = false,
+            r;
     unsigned short gCount = user.eqCharm.def,
-                   usedPos = 0;
+            usedPos = 0;
     string uWord,
             oWord,
             mWord;
@@ -501,14 +521,21 @@ bool battle(Player &user, Player &opnt) {
 
     do {
         //Player Turn
+        cout << user.name << "'s turn!" << endl;
         if (user.eqGun.cAmmo > 0) {
-            cout << "AMMO: " << user.eqGun.cAmmo << "/" << user.eqGun.ammo << endl;
+            cout << "PLAYER HP:   " << user.hp << "/" << gMaxHp(user.level)
+                    << endl;
+            cout << "OPPONENT HP: " << opnt.hp << "/" << gMaxHp(opnt.level)
+                    << endl;
+            cout << "AMMO: " << user.eqGun.cAmmo << "/" << user.eqGun.ammo
+                    << endl;
             cout << "Choose a word to fire" << endl;
             uWord = gInStr();
             if (!guess(uWord, opnt)) {
                 opnt.hp -= user.eqGun.atk;
                 cout << opnt.name << " was hit!" << endl;
-                cout << opnt.name << " took " << user.eqGun.atk << " damage" << endl;
+                cout << opnt.name << " took " << user.eqGun.atk << " damage"
+                        << endl;
             } else {
                 cout << opnt.name << " dodged your shot!" << endl;
             }
@@ -518,33 +545,59 @@ bool battle(Player &user, Player &opnt) {
             cout << user.name << " reloaded!" << endl;
         }
         //Opponent Turn
+        cout << opnt.name << "'s turn!" << endl;
         if (opnt.eqGun.cAmmo > 0) {
             oWord = words[rand() % WS];
             mWord = mask(oWord);
-            cout << oWord << endl;
+            //cout << oWord << endl;
             do {
                 char guess;
                 cout << mWord << endl;
-                cout << "REMAINING GUESSES:" << gCount << endl;
-                cout << "USED CHARACTERS: " << used << endl;
+                cout << "REMAINING GUESSES: " << gCount << endl;
+                cout << "USED CHARACTERS:   " << used << endl;
                 guess = tolower(gInput());
-                if(cntns(oWord, guess)){
+                if (cntns(oWord, guess)) {
                     unmask(oWord, mWord, guess);
-                }
-                else{
+                } else {
                     --gCount;
                 }
-                used[usedPos++] = guess;
+                if (!cntns(string(used), guess)) {
+                    used[usedPos++] = guess;
+                }
                 gSort(used, 26);
-                
+
             } while (gCount > 0 && mWord != oWord);
+            cout << oWord << endl;
+            if (gCount <= 0) {
+                user.hp -= opnt.eqGun.atk;
+                cout << user.name << " was hit!" << endl;
+                cout << user.name << " took " << opnt.eqGun.atk << " damage"
+                        << endl;
+            } else if (mWord == oWord) {
+                cout << user.name << " dodged the shot!" << endl;
+            }
+            gCount = user.eqCharm.def;
+            for (int i = 0; i < 26; ++i) {
+                used[i] = 0;
+            }
+            usedPos = 0;
 
             opnt.eqGun.cAmmo--;
         } else {
             reload(opnt);
             cout << opnt.name << " reloaded!" << endl;
         }
+        if (user.hp <= 0) {
+            r = false;
+            btlOver = true;
+        } else if (opnt.hp <= 0) {
+            r = true;
+            user.gold += opnt.gold;
+            btlOver = true;
+        }
     } while (!btlOver);
+
+    return r;
 }
 
 void plyGame() {
@@ -602,6 +655,7 @@ void plyGame() {
             {
                 dspFile("bountyboard.txt");
                 bBoard(enemies, bounty);
+                pause();
                 break;
             }
             case 'H':

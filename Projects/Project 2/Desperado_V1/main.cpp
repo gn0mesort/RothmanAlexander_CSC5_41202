@@ -24,11 +24,10 @@ using namespace std;
 //Global Constants
 
 //Function Prototypes
-void frmtOpt(string);
-void gChoice(char[], const string[], int);
+void frmtOpt(string &);
+void gChoice(char [], const string [], int);
 bool chkFile(const string &);
 char gInput(void);
-unsigned short gMaxHp(unsigned char);
 string gInStr(void);
 string trim(string);
 void dspFile(string);
@@ -39,7 +38,7 @@ void unmask(string &, string &, char);
 //Game Functions
 void svGame(string);
 void ldGame(string);
-char shwMenu(string [], int);
+char shwMenu(const string [], int);
 void plyGame(void);
 //Struct Functions
 bool battle(Player &, Player &);
@@ -59,7 +58,12 @@ void pPlayer(const Player &);
 vector<Player> ldEnms(const vector<Gun> &, const vector<Charm> &);
 vector<Charm> ldChrms();
 vector<Gun> ldGns();
-
+short gMaxHp(unsigned short = 1);
+void reload(Player &);
+void bBoard(const vector<Player> &, int &);
+void ldWrds(string *, int);
+bool guess(string, Player &);
+string trim(string); 
 //Begin Execution
 int main(int argc, char** argv) {
     //Declaration and Initialization
@@ -494,68 +498,136 @@ vector<Gun> ldGns() {
     return guns;
 }
 
-unsigned short gMaxHp(unsigned char level) {
-    const unsigned char BASEHP = 100;
-    const float RATE = 0.05f;
+/******************************************************************************/
+/*********************************Get Max Hp***********************************/
+/******************************************************************************/
+//  Get the maximum hp value for the current level of a character
+//Inputs
+//  level : The level to find the max hp for
+//Outputs
+//  The max hp for the input level as calculated by the formula
+//  100 * (1 + 0.5)^level
+short gMaxHp(unsigned short level) {
+    const unsigned char BASEHP = 100; //The minimum hp value
+    const float RATE = 0.05f; //The growth rate per level
 
     return BASEHP * (pow((1 + RATE), level));
 }
 
+/******************************************************************************/
+/*********************************Get Input************************************/
+/******************************************************************************/
+//  Get a single character of input from the user
+//Outputs
+//  The character input by the user uppercased if possible
 char gInput() {
-    string input;
+    //Objects
+    string input; //The user's input
+    
+    //Basic input processing
     cout << "> ";
     cin >> input;
 
+    //Return the first character of the input uppercased
     return toupper(input.at(0));
 }
 
+/******************************************************************************/
+/*****************************Get String Input*********************************/
+/******************************************************************************/
+//  Get a string as input from the user
+//Outputs
+//  The input string
 string gInStr() {
-    string input;
+    //Objects
+    string input; //The input value
+    
+    //Basic input processing
     cout << "> ";
     cin >> input;
 
     return input;
 }
 
-void gChoice(char output[], string input[], int length) {
-    for (int i = 0; i < length; ++i) {
-        output[i] = toupper(input[i].at(0));
+/******************************************************************************/
+/*********************************Get Choices**********************************/
+/******************************************************************************/
+//  Get an array of valid choices given an array of strings
+//Inputs
+//  output[] : The array to output to
+//  input[] : The list of strings to process
+//  length : The length of the input and output arrays
+//Outputs
+//  output[] : The output array filled with the first letter of each string value
+void gChoice(char output[], const string input[], int length) {
+    for (int i = 0; i < length; ++i) { //For each string value
+        output[i] = toupper(input[i].at(0)); //Set the output to the uppercase of the first character of the input
     }
 }
 
+/******************************************************************************/
+/************************************Pause*************************************/
+/******************************************************************************/
+//  Pause the game and wait for user input to continue
 void pause() {
-    cin.ignore();
-    cout << "Press Enter to continue...";
-    cin.get();
+    cin.ignore(); //Clear the input
+    cout << "Press Enter to continue..."; //Display instructions
+    cin.get(); //Wait for input
 }
 
-string fmrtOpt(const string opt) {
-    string r = opt;
+/******************************************************************************/
+/*******************************Format Option**********************************/
+/******************************************************************************/
+//  Format menu options for display
+//Inputs
+//  &opt : The string to format
+//Outputs
+//  r : The string formated so that the first character is wrapped in ()s
+string frmtOpt(const string &opt) {
+    string r = opt; //Set the return to the input string
 
-    r.insert(0, 1, '(');
-    r.insert(2, 1, ')');
+    r.insert(0, 1, '('); //Insert an open paren
+    r.insert(2, 1, ')'); //Insert a close paren
 
     return r;
 }
 
+/******************************************************************************/
+/************************************Reload************************************/
+/******************************************************************************/
+//  Reload a player's weapon
+//Inputs
+//  &p : The player to reload
 void reload(Player &p) {
-    p.eqGun.cAmmo = p.eqGun.ammo;
+    p.eqGun.cAmmo = p.eqGun.ammo; //Set current ammo to max ammo
 }
 
-char shwMenu(string opts[], int length) {
-    bool invalid = true;
-    char input;
-    char choices[length] = {0};
-    gChoice(choices, opts, length);
-    for (int i = 0; i < length; ++i) {
-        cout << setw(opts[i].length() + 5) << fmrtOpt(opts[i]);
+/******************************************************************************/
+/**********************************Show Menu***********************************/
+/******************************************************************************/
+//  Display a menu and record input on that menu
+//Inputs
+//  opts[] : The options to display
+//  length : The length of the option array
+//Outputs
+//  input : the user input choice
+char shwMenu(const string opts[], int length) {
+    //Variables
+    bool invalid = true; //Whether the input is valid or not
+    char input; //The input character
+    char choices[length] = {0}; //The array of valid choices
+    
+    gChoice(choices, opts, length); //Initialize choices
+    for (int i = 0; i < length; ++i) { //For each option
+        //Output the option formatted and sized correctly
+        cout << setw(opts[i].length() + 5) << frmtOpt(opts[i]);
     }
     cout << endl;
-    do {
+    do { //While the input is not valid
         input = gInput();
-        for (int i = 0; i < length; ++i) {
-            if (choices[i] == input) {
-                invalid = false;
+        for (int i = 0; i < length; ++i) { //For each choice
+            if (choices[i] == input) { //If the input is a choice
+                invalid = false; //The input is valid
             }
         }
     } while (invalid);
@@ -563,97 +635,140 @@ char shwMenu(string opts[], int length) {
     return input;
 }
 
-void bBoard(const vector<Player> enemies, int &bounty) {
-    char choice;
-    string menu[enemies.size()];
+/******************************************************************************/
+/********************************Bounty Board**********************************/
+/******************************************************************************/
+//  Display the bounty board menu and process it
+//Inputs
+//  &enemies : The list of enemies in the game
+//  &bounty : The position of the chosen bounty in the enemies list
+//Outputs
+//  &bounty : The position after being set
+void bBoard(const vector<Player> &enemies, int &bounty) {
+    //Variables
+    char choice; //The player's choice of bounty
+    //Collections
+    string menu[enemies.size()]; //The menu array
 
-    for (int i = 0; i < enemies.size() - 1; ++i) {
-        menu[i] = enemies[i].name + '\n';
+    for (int i = 0; i < enemies.size() - 1; ++i) { //Fill the menu array
+        menu[i] = enemies[i].name + '\n'; //Format the menu to display vertically
     }
-    choice = shwMenu(menu, enemies.size() - 1);
-    for (int i = 0; i < enemies.size() - 1; ++i) {
+    choice = shwMenu(menu, enemies.size() - 1); //Display menu and get choice
+    for (int i = 0; i < enemies.size() - 1; ++i) { //Check to see if the input is a choice
         if (choice == toupper(menu[i].at(0))) {
+            //Show your choice
             cout << "You choose to hunt " << enemies[i].name << endl;
+            //Set bounty
             bounty = i;
         }
     }
 }
 
+/******************************************************************************/
+/***********************************Load Words*********************************/
+/******************************************************************************/
+//  Load a word list
+//Inputs
+//  *words : A pointer to an array of strings
+//  length : The length of the pointed to array
+//Outputs
+//  *words : The array after being filled with words
 void ldWrds(string *words, int length) {
-    ifstream iFile;
+    //Objects
+    ifstream iFile; //The file stream
 
-    iFile.open("wdlcur.txt");
-    for (int i = 0; iFile >> *(words + i); ++i);
-    iFile.clear();
+    iFile.open("wdlcur.txt"); //Open the file
+    for (int i = 0; iFile >> *(words + i); ++i); //Input the current file line into the array
+    iFile.close(); //Close the file
 }
 
+/******************************************************************************/
+/**************************************Guess***********************************/
+/******************************************************************************/
+//  Play hangman from the computer player's perspective
+//Inputs
+//  word : The word to try to guess
+//  &p : The computer character guessing the word
+//Outputs
+// true if guessed or false if failed
 bool guess(string word, Player &p) {
-    const int ALPHAS = 26,
-            LS = 2;
-    string mWord = mask(word);
-    ifstream iFile;
-    unsigned short gCount = p.eqCharm.def,
-            total;
-    unsigned short lfreq[ALPHAS][LS];
+    //Constants
+    const int ALPHAS = 26, //Alphabet size
+              LS = 2; //List size
+    //Variables
+    unsigned short gCount = p.eqCharm.def, //The number of guesses the character gets
+                   total; //The total number of letters in the frequency list
+    //Objects
+    string mWord = mask(word); //The masked version of the word to guess
+    ifstream iFile; //The file stream
+    unsigned short lFreq[ALPHAS][LS]; //2d array of letters and frequencies
 
-    iFile.open("freq.dat");
+    //Read the frequency data
+    iFile.open("freq.dat"); //Open frequency data file
+    for (int i = 0; i < ALPHAS; ++i) { //For each cell in lFreq
+        lFreq[i][0] = i; //Set the first value to the current value of i
+        iFile >> lFreq[i][1]; //Set the second value to the frequency of the corresponding letter
+    }
+    iFile.close(); //Close the frequency data file
+
+    //Calculate total of frequency data
     for (int i = 0; i < ALPHAS; ++i) {
-        lfreq[i][0] = i;
-        iFile >> lfreq[i][1];
+        total += lFreq[i][1];
     }
-    iFile.close();
-
-    /*
-    for(int i = 0; i < ALPHAS; ++i){
-        cout << static_cast<char>(lfreq[i][0] + 97) << ":" << lfreq[i][1] << endl;
-    }
-     */
-
-    for (int i = 0; i < ALPHAS; ++i) {
-        total += lfreq[i][1];
-    }
-
+    
+    //Dyanmically allocate a character array to pick guesses from
     char *gList = new char[total];
 
+    //Initialize the guess list
     for (int i = 0; i < total; ++i) {
         gList[i] = 0;
     }
 
-    string temp;
-    for (int i = 0; i < ALPHAS; ++i) {
-
-        for (int j = 0; j < lfreq[i][1]; ++j) {
-            temp += static_cast<char> (lfreq[i][0] + 97);
+    //Fill the guess list
+    string temp; //Create a temporary string
+    for (int i = 0; i < ALPHAS; ++i) { //For each letter in the alphabet
+        for (int j = 0; j < lFreq[i][1]; ++j) { //For the frequency of that character
+            temp += static_cast<char> (lFreq[i][0] + 97); //Write that character to the temporary string
         }
     }
-    strcpy(gList, temp.c_str());
+    strcpy(gList, temp.c_str()); //Copy the temporary string to the guess list
+    temp.clear(); //Clear the temporary string
 
+    //Preform guesses
     cout << "OPPONENTS GUESSES: ";
     for (int i = gCount; i > 0;) {
-        char guess = gList[rand() % total];
-        cout << guess;
-        if (cntns(word, guess)) {
-            unmask(word, mWord, guess);
-        } else {
+        char guess = gList[rand() % total]; //Guess a random character from the guess list
+        cout << guess; //Output the guess
+        if (cntns(word, guess)) { //If the word contains the guess
+            unmask(word, mWord, guess); //Unmask the character
+        } else { //Else subtract for guess
             --i;
         }
-        if (mWord == word) {
+        if (mWord == word) { //If the masked word and the guess word match
             cout << endl;
-            delete [] gList;
+            delete [] gList; //Delete the guess list
             return true;
         }
     }
     cout << endl;
 
-    delete [] gList;
+    delete [] gList; //Delete the guess list
     return false;
 }
 
+/******************************************************************************/
+/*************************************Trim*************************************/
+/******************************************************************************/
+// Trim a string so that it does not contain nonprinting characters
+//Inputs
+//  str : The string to trim
+//Outputs
+// r : The trimmed string
 string trim(string str) {
     string r;
 
-    for (int i = 0; i < str.size(); ++i) {
-        if (str.at(i) > 31 && str.at(i) < 127) {
+    for (int i = 0; i < str.size(); ++i) { //For each character in str
+        if (str.at(i) > 31 && str.at(i) < 127) { //Copy the character if it is printable
             r += str.at(i);
         }
     }

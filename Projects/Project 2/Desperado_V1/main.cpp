@@ -37,7 +37,7 @@ char shwMenu(string [], int);
 void plyGame(void);
 void options(void);
 //Struct Functions
-void battle(Player &, Player &);
+bool battle(Player &, Player &);
 vector<Gun> ldGns();
 vector<Charm> ldChrms();
 vector<Player> ldEnms();
@@ -81,14 +81,13 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-bool chkFile(string path){
+bool chkFile(string path) {
     ifstream file;
     file.open(path.c_str());
-    if(file.good()){
+    if (file.good()) {
         file.close();
         return true;
-    }
-    else{
+    } else {
         file.close();
         return false;
     }
@@ -106,11 +105,10 @@ void shHeal(Player &user) {
         switch (shwMenu(menu, MS)) {
             case 'Y':
             {
-                if(user.gold > (gMaxHp(user.level) - user.hp) * 10){
-                user.gold -= (gMaxHp(user.level) - user.hp) * 10;
-                user.hp = gMaxHp(user.level);
-                }
-                else{
+                if (user.gold > (gMaxHp(user.level) - user.hp) * 10) {
+                    user.gold -= (gMaxHp(user.level) - user.hp) * 10;
+                    user.hp = gMaxHp(user.level);
+                } else {
                     cout << "You don't have enough gold" << endl;
                 }
                 break;
@@ -372,6 +370,10 @@ string fmrtOpt(const string opt) {
     return r;
 }
 
+void reload(Player &p) {
+    p.eqGun.cAmmo = p.eqGun.ammo;
+}
+
 char shwMenu(string opts[], int length) {
     bool invalid = true;
     char input;
@@ -393,20 +395,156 @@ char shwMenu(string opts[], int length) {
     return input;
 }
 
-void bBoard(const vector<Player> enemies, int &bounty){
+void bBoard(const vector<Player> enemies, int &bounty) {
     char choice;
     string menu[enemies.size()];
-    
-    for(int i = 0; i < enemies.size() - 1; ++i){
+
+    for (int i = 0; i < enemies.size() - 1; ++i) {
         menu[i] = enemies[i].name;
     }
     choice = shwMenu(menu, enemies.size() - 1);
-    for(int i  = 0; i < enemies.size() - 1; ++i){
-        if(choice == toupper(menu[i].at(0))){
+    for (int i = 0; i < enemies.size() - 1; ++i) {
+        if (choice == toupper(menu[i].at(0))) {
             cout << "You choose to hunt " << enemies[i].name << endl;
             bounty = i;
         }
     }
+}
+
+void ldWrds(string *words, int length) {
+    ifstream iFile;
+
+    iFile.open("wdleasy.txt");
+    for (int i = 0; iFile >> *(words + i); ++i);
+    iFile.clear();
+}
+
+bool guess(string word, Player &p) {
+    return false;
+}
+
+/******************************************************************************/
+/************************************Mask**************************************/
+/******************************************************************************/
+//  Puts a string on equal length to an input string into a new array
+//  Fills the new string with the given character
+string mask(string oWord) {
+    string r;
+
+    for (int i = 0; i < oWord.size(); ++i) { //loop through the words
+        r += '*';
+    }
+
+    return r;
+}
+
+/******************************************************************************/
+/**********************************Contains************************************/
+/******************************************************************************/
+//  A function to determine if a string contains a character
+bool cntns(string word, char key){
+    for(int i = 0; i < word.length(); ++i){ //loop through word
+        if(word.at(i) == key){ return true; } //if a character matches the key return true
+    }
+    //Otherwise return false
+    return false;
+}
+
+/******************************************************************************/
+/*********************************Gnome Sort***********************************/
+/******************************************************************************/
+//  Sort a character array. Weights null characters as higher than all others
+//Inputs
+//  cArr : the character array to sort
+//  length : the length of the array to sort
+void gSort(char cArr[], int length){
+    for(int pos = 1; pos < length;){ //Gnome Sort modified to handle null terminators
+        if(cArr[pos] >= cArr[pos - 1] || cArr[pos] == '\0'){ //if the current character is greater than the previous one or null
+            ++pos; //move one position forward
+        }
+        else if (cArr[pos] <= cArr[pos - 1]){ //If the current character is less than or equal to the previous
+            //Swap the current character and the last
+            cArr[pos] = cArr[pos] ^ cArr[pos - 1];
+            cArr[pos - 1] = cArr[pos] ^ cArr[pos - 1];
+            cArr[pos] = cArr[pos] ^ cArr[pos - 1];
+            if(pos > 1){ //If the position is greater than one
+                --pos; //Move back one position
+            }
+        }
+    }
+}
+
+/******************************************************************************/
+/*********************************Unmask***************************************/
+/******************************************************************************/
+//  Unmask a single character in a masked string based on an unmasked string
+void unmask(string &oWord, string &mWord, char key){
+    for(int i = 0; i < oWord.size(); ++i){ //loop through all characters
+        if(oWord.at(i) == key){ //compare each character to the guess character
+            mWord.at(i) = key; //Unmask the character if they match
+        }
+    }
+}
+
+bool battle(Player &user, Player &opnt) {
+    const int WS = 4473;
+    bool btlOver = false;
+    unsigned short gCount = user.eqCharm.def,
+                   usedPos = 0;
+    string uWord,
+            oWord,
+            mWord;
+    char used[26] = {0};
+    string words[WS];
+
+    ldWrds(words, WS);
+
+    do {
+        //Player Turn
+        if (user.eqGun.cAmmo > 0) {
+            cout << "AMMO: " << user.eqGun.cAmmo << "/" << user.eqGun.ammo << endl;
+            cout << "Choose a word to fire" << endl;
+            uWord = gInStr();
+            if (!guess(uWord, opnt)) {
+                opnt.hp -= user.eqGun.atk;
+                cout << opnt.name << " was hit!" << endl;
+                cout << opnt.name << " took " << user.eqGun.atk << " damage" << endl;
+            } else {
+                cout << opnt.name << " dodged your shot!" << endl;
+            }
+            user.eqGun.cAmmo--;
+        } else {
+            reload(user);
+            cout << user.name << " reloaded!" << endl;
+        }
+        //Opponent Turn
+        if (opnt.eqGun.cAmmo > 0) {
+            oWord = words[rand() % WS];
+            mWord = mask(oWord);
+            cout << oWord << endl;
+            do {
+                char guess;
+                cout << mWord << endl;
+                cout << "REMAINING GUESSES:" << gCount << endl;
+                cout << "USED CHARACTERS: " << used << endl;
+                guess = tolower(gInput());
+                if(cntns(oWord, guess)){
+                    unmask(oWord, mWord, guess);
+                }
+                else{
+                    --gCount;
+                }
+                used[usedPos++] = guess;
+                gSort(used, 26);
+                
+            } while (gCount > 0 && mWord != oWord);
+
+            opnt.eqGun.cAmmo--;
+        } else {
+            reload(opnt);
+            cout << opnt.name << " reloaded!" << endl;
+        }
+    } while (!btlOver);
 }
 
 void plyGame() {
@@ -418,7 +556,7 @@ void plyGame() {
     vector<Gun> guns(ldGns());
     vector<Charm> charms(ldChrms());
     vector<Player> enemies(ldEnms(guns, charms));
-    
+
     string pgMenu[] = {"New Game", "Load"};
     string gMenu[] = {"Bounty Board", "Hunt Bounty",
         "Gunsmith", "Shaman", "Character", "Quit"};
@@ -441,10 +579,9 @@ void plyGame() {
         {
             cout << "Enter the name of a character to load" << endl;
             pUser.name = gInStr();
-            if(chkFile(pUser.name + ".sav")){
+            if (chkFile(pUser.name + ".sav")) {
                 ldGame(pUser, guns, charms);
-            }
-            else{
+            } else {
                 cout << "Save not found" << endl;
                 cout << "Creating new game..." << endl;
                 dspFile("titlecrawl.txt");
@@ -469,13 +606,14 @@ void plyGame() {
             }
             case 'H':
             {
-                if(bounty != -1){
-                    
-                }
-                else{
+                if (bounty != -1) {
+                    reload(pUser);
+                    battle(pUser, enemies[bounty]);
+                } else {
                     cout << "You have to choose a bounty first" << endl;
                     cout << "Go to the bounty board" << endl;
                 }
+                pause();
                 break;
             }
             case 'G':

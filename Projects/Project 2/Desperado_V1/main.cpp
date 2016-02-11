@@ -22,6 +22,8 @@ using namespace std;
 #include "Game.h" //Game object library
 
 //Global Constants
+const int ALPHAS = 26, //Alphabet size
+          LS = 2; //List size
 
 //Function Prototypes
 void pause(void);
@@ -32,6 +34,7 @@ void ldWrds(string *, int);
 void gChoice(char [], const string [], int);
 void gSort(char [], int);
 void toLCase(string &);
+void ldFreq(unsigned short[ALPHAS][LS]);
 bool chkFile(const string &);
 bool cntns(string, char); 
 bool isWord(string);
@@ -679,6 +682,25 @@ void ldWrds(string *words, int length) {
 }
 
 /******************************************************************************/
+/***************************Load Frequency Data********************************/
+/******************************************************************************/
+//  Load frequency data from a file into a 2d array
+//Inputs
+// lFreq[][] : The array to load data into
+//Outputs
+// lFreq[][] : The filled array
+void ldFreq(unsigned short lFreq[ALPHAS][LS]){
+    ifstream iFile; //The file stream
+    
+    iFile.open("freq.dat"); //Open frequency data file
+    for (int i = 0; i < ALPHAS; ++i) { //For each cell in lFreq
+        lFreq[i][0] = i; //Set the first value to the current value of i
+        iFile >> lFreq[i][1]; //Set the second value to the frequency of the corresponding letter
+    }
+    iFile.close(); //Close the frequency data file
+}
+
+/******************************************************************************/
 /**************************************Guess***********************************/
 /******************************************************************************/
 //  Play hangman from the computer player's perspective
@@ -688,24 +710,17 @@ void ldWrds(string *words, int length) {
 //Outputs
 // true if guessed or false if failed
 bool guess(string word, Player &p) {
-    //Constants
-    const int ALPHAS = 26, //Alphabet size
-              LS = 2; //List size
+
     //Variables
     unsigned short gCount = p.eqCharm.def, //The number of guesses the character gets
                    total; //The total number of letters in the frequency list
     //Objects
     string mWord = mask(word); //The masked version of the word to guess
-    ifstream iFile; //The file stream
+ 
     unsigned short lFreq[ALPHAS][LS]; //2d array of letters and frequencies
 
     //Read the frequency data
-    iFile.open("freq.dat"); //Open frequency data file
-    for (int i = 0; i < ALPHAS; ++i) { //For each cell in lFreq
-        lFreq[i][0] = i; //Set the first value to the current value of i
-        iFile >> lFreq[i][1]; //Set the second value to the frequency of the corresponding letter
-    }
-    iFile.close(); //Close the frequency data file
+    ldFreq(lFreq);
 
     //Calculate total of frequency data
     for (int i = 0; i < ALPHAS; ++i) {
@@ -895,8 +910,8 @@ void toLCase(string &word) {
 //  true if the player wins the battle and false otherwise
 bool battle(Player &user, Player &opnt) {
     //Constants
-    const int WS = 125, //The size of the word list
-              ALPHAS = 26; //The size of the alphabet
+    const int WS = 125; //The size of the word list
+   
     //Variables
     bool btlOver = false, //Whether or not the battle is finished
          r; //The return value

@@ -712,7 +712,7 @@ bool guess(string word, Player &p) {
         total += lFreq[i][1];
     }
     
-    //Dyanmically allocate a character array to pick guesses from
+    //Dynamically allocate a character array to pick guesses from
     char *gList = new char[total];
 
     //Initialize the guess list
@@ -1083,7 +1083,7 @@ void plyGame() {
             {
                 if (bounty != -1) { //If bounty is set
                     reload(pUser); //Reload gun
-                    battle(pUser, enemies[bounty]); //Hunt bounty
+                    battle(pUser, enemies[bounty]) ? wins += 1 : wins += 0; //Hunt bounty
                 } else { //Otherwise print error message
                     cout << "You have to choose a bounty first" << endl;
                     cout << "Go to the bounty board" << endl;

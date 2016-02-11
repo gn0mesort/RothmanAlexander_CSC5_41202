@@ -995,7 +995,9 @@ bool battle(Player &user, Player &opnt) {
             cout << opnt.name << " was defeated" << endl;
             cout << "You were awarded " << opnt.gold << " gold" << endl;
             r = true; //Return a victory
-            user.gold += opnt.gold; //Collect your spoils
+            if(user.gold < 60000){ //Collect your spoils
+                user.gold += opnt.gold;
+            }
             btlOver = true; //End the battle
         }
     } while (!btlOver);

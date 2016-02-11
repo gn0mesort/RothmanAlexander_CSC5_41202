@@ -1,0 +1,23 @@
+DESPERADO HELP:
+
+MENU NAVIGATION:
+	To navigate menus in Desperado simply enter the first letter of the option you choose.
+	This each valid option will appear in the menu surrounded by a pair of parentheses.
+	For example: (P)lay
+	To play the game simply enter P or p.
+	Desperado accepts longer input but only the first character is considered in program logic.
+HOW TO PLAY:
+	In Desperado you are a bounty hunter in the wild west.
+	Your goal is to get as much gold as possible.
+	You will be presented with a serious of menus.
+	To get to fighting right away head to the bounty board
+	Then select hunt bounty.
+	This will trigger a battle.
+	Each battle is a serious of games of hangman.
+	You start by selecting a word.
+	Then the game will attempt to guess it
+	The game will present you with a word next.
+	If you correctly guess your word you will receive 0 damage for the turn.
+	Battles end only when one character has 0 HP remaining.
+MODIFICATION:
+	Files with the extension .txt may be safely modified. Other files should not be altered.
